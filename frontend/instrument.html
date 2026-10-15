@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instrument — iLaboratories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F2EE; --surface: #FDFCFA; --surface2: #F0EDE8;
+    --border: #DDD9D0; --border-strong: #C5C0B5;
+    --text: #1A1815; --text2: #5C5850; --text3: #9A9489;
+    --accent: #2D6A4F; --accent-light: #E8F5EE; --accent-dark: #1B4332;
+    --amber: #92400E; --amber-light: #FEF3C7;
+    --red: #991B1B; --red-light: #FEE2E2;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+    --radius: 10px; --radius-sm: 6px; --radius-lg: 16px;
+    --font-body: 'Outfit', sans-serif; --font-display: 'Fraunces', serif; --font-mono: 'DM Mono', monospace;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  [data-theme="dark"] {
+    --bg: #0F1008; --surface: #191A10; --surface2: #22231A;
+    --border: #2E2F24; --border-strong: #3E3F32;
+    --text: #F2F0E8; --text2: #A8A598; --text3: #6B6960;
+    --accent: #52B788; --accent-light: #0D2B1E; --accent-dark: #74C69D;
+    --amber: #FCD34D; --amber-light: #2D1F04;
+    --red: #F87171; --red-light: #2D0A0A;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4); --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+ 
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; gap: 1rem; height: 60px; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+  .back-link { display: flex; align-items: center; gap: 6px; color: var(--text3); text-decoration: none; font-size: 13px; font-weight: 500; padding: 6px 10px; border-radius: var(--radius-sm); transition: var(--transition); white-space: nowrap; }
+  .back-link:hover { background: var(--surface2); color: var(--text); }
+  .divider-v { width: 1px; height: 24px; background: var(--border); }
+  .logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; color: var(--accent); letter-spacing: -0.02em; white-space: nowrap; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .logo span { color: var(--text3); font-weight: 300; font-size: 1rem; font-style: italic; }
+  .spacer { flex: 1; }
+  .theme-toggle { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; cursor: pointer; font-size: 14px; font-family: var(--font-body); color: var(--text2); display: flex; align-items: center; gap: 6px; transition: var(--transition); white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--border-strong); }
+ 
+  .main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+  .section-title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+  .section-subtitle { font-size: 14px; color: var(--text3); font-style: italic; margin-top: 2px; }
+ 
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow); }
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; text-align: center; }
+  .stat-value { font-family: var(--font-mono); font-size: 1.9rem; font-weight: 500; color: var(--accent); line-height: 1; margin-bottom: 6px; }
+  .stat-value.warn { color: var(--amber); } .stat-value.bad { color: var(--red); }
+  .stat-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+ 
+  .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 12px; font-weight: 500; gap: 4px; white-space: nowrap; }
+  .badge-green { background: var(--accent-light); color: var(--accent); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-gray { background: var(--surface2); color: var(--text2); }
+ 
+  .btn { padding: 9px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 500; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+  .btn:hover { background: var(--surface2); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn-danger { background: var(--red-light); border-color: transparent; color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-sm { padding: 5px 10px; font-size: 12.5px; }
+  .btn:focus-visible, .chip:focus-visible, .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+ 
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 12.5px; font-weight: 500; color: var(--text2); }
+  input, select, textarea { font-family: var(--font-body); font-size: 14px; padding: 8px 11px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); transition: var(--transition); width: 100%; }
+  input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .hint { font-size: 12px; color: var(--text3); }
+ 
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+  .toolbar .search { flex: 1; min-width: 200px; }
+  .toolbar select { width: auto; min-width: 150px; }
+ 
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; padding: 10px 12px; background: var(--surface2); color: var(--text2); font-weight: 600; font-size: 12px; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  .mono { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+  .item-name { font-weight: 600; }
+  .dim { color: var(--text3); }
+  .actions { display: flex; gap: 4px; justify-content: flex-end; }
+  .next-cell { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
+ 
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); }
+  .empty .big { font-size: 2.5rem; margin-bottom: 8px; }
+  .empty p { margin-bottom: 14px; font-size: 14px; }
+ 
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 500; padding: 1rem; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; padding: 1.5rem; border: 1px solid var(--border); }
+  .modal h3 { font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+ 
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: var(--radius-sm); font-size: 14px; box-shadow: var(--shadow-md); z-index: 600; opacity: 0; transform: translateY(10px); transition: var(--transition); pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  footer.page-footer { text-align: center; padding: 2rem 0 1rem; font-size: 12.5px; color: var(--text3); }
+ 
+  @media (max-width: 720px) {
+    .topbar { padding-left: 1rem; padding-right: 1rem; }
+    .main { padding: 1.25rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .back-link span, .logo span { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+ 
+<header class="topbar">
+  <a class="back-link" href="ilaboratories.html" title="Kembali ke Dashboard">← <span>iLaboratories</span></a>
+  <div class="divider-v"></div>
+  <a class="logo" href="instrument.html">🧰 Instrument <span>daftar alat &amp; kalibrasi</span></a>
+  <div class="spacer"></div>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌙</span><span id="theme-label">Dark</span>
+  </button>
+</header>
+ 
+<main class="main">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Daftar Instrumen</div>
+      <div class="section-subtitle">Merk, nomor instrumen, tipe, dan jadwal kalibrasi seluruh alat laboratorium</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" onclick="exportCSV()">⬇ Ekspor CSV</button>
+      <button class="btn btn-primary" onclick="openForm()">＋ Tambah Alat</button>
+    </div>
+  </div>
+ 
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-value" id="st-total">0</div><div class="stat-label">Total Alat</div></div>
+    <div class="stat-card"><div class="stat-value" id="st-ok">0</div><div class="stat-label">Kalibrasi Valid</div></div>
+    <div class="stat-card"><div class="stat-value warn" id="st-soon">0</div><div class="stat-label">Jatuh Tempo ≤ 30 Hari</div></div>
+    <div class="stat-card"><div class="stat-value bad" id="st-over">0</div><div class="stat-label">Lewat Jatuh Tempo</div></div>
+  </div>
+ 
+  <div class="card">
+    <div class="toolbar">
+      <input class="search" type="search" id="f-q" placeholder="🔍 Cari nama, merk, no. instrumen, tipe…" oninput="render()" aria-label="Cari alat">
+      <select id="f-status" onchange="render()" aria-label="Filter status kalibrasi">
+        <option value="">Semua status</option>
+        <option value="ok">Valid</option>
+        <option value="soon">Segera jatuh tempo</option>
+        <option value="over">Lewat jatuh tempo</option>
+        <option value="none">Belum diisi</option>
+      </select>
+    </div>
+    <div id="list"></div>
+  </div>
+ 
+  <footer class="page-footer">iLaboratories · Modul Instrument</footer>
+</main>
+ 
+<!-- MODAL -->
+<div class="modal-bg" id="modal" onclick="if(event.target===this)closeForm()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <h3 id="m-title">Tambah Alat</h3>
+    <div class="form-grid">
+      <div class="field full"><label for="m-name">Nama alat *</label><input id="m-name" placeholder="mis. HPLC 1"></div>
+      <div class="field"><label for="m-brand">Merk</label><input id="m-brand" placeholder="mis. Shimadzu"></div>
+      <div class="field"><label for="m-no">No. instrumen</label><input id="m-no" placeholder="mis. INS-KIM-001"></div>
+      <div class="field full"><label for="m-type">Tipe</label><input id="m-type" placeholder="mis. LC-20AD"></div>
+      <div class="field"><label for="m-cal">Tanggal kalibrasi</label><input id="m-cal" type="date" onchange="suggestNext()"></div>
+      <div class="field"><label for="m-recal">Tanggal rekalibrasi</label><input id="m-recal" type="date" onchange="suggestNext()"></div>
+      <div class="field full"><label for="m-next">Kalibrasi selanjutnya</label><input id="m-next" type="date">
+        <span class="hint">Terisi otomatis +12 bulan dari kalibrasi/rekalibrasi terbaru jika masih kosong; boleh diubah manual.</span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeForm()">Batal</button>
+      <button class="btn btn-primary" onclick="save()">Simpan</button>
+    </div>
+  </div>
+</div>
+ 
+<div class="toast" id="toast"></div>
+ 
+<script>
+// ═══ THEME (selaras dengan portal — key: mc-theme) ═══
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  applyThemeLabel(next);
+  try { localStorage.setItem('mc-theme', next); } catch (e) {}
+}
+function applyThemeLabel(t) {
+  document.getElementById('theme-icon').textContent = t === 'dark' ? '☀️' : '🌙';
+  document.getElementById('theme-label').textContent = t === 'dark' ? 'Light' : 'Dark';
+}
+(function initTheme() {
+  let saved = 'light';
+  try { saved = localStorage.getItem('mc-theme') || 'light'; } catch (e) {}
+  document.documentElement.setAttribute('data-theme', saved);
+  applyThemeLabel(saved);
+})();
+ 
+// ═══ DATA ═══
+// {id, name, brand, no, type, calDate, recalDate, nextDate}
+const KEY = 'ilab-instruments';
+// Daftar awal diambil dari alat di modul Schedule; merk/no/tipe/tanggal diisi lewat tombol Edit.
+const SEED = ['HPLC 1','HPLC 2','HPLC 3','HPLC 4','LAF 1','LAF 2','LAF 3','BSC 1','BSC 2','GC 1','GC 2','UV-Vis','Inkubator','Autoclave','Disolusi Tester'];
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'i' + Date.now() + Math.random().toString(16).slice(2));
+function load() {
+  try { const v = localStorage.getItem(KEY); if (v) return JSON.parse(v); } catch (e) {}
+  return SEED.map(n => ({ id: uid(), name: n, brand: '', no: '', type: '', calDate: '', recalDate: '', nextDate: '' }));
+}
+let items = load();
+function persist() { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) { toast('Gagal menyimpan ke browser'); } }
+ 
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = s => s ? new Date(s + 'T00:00').toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+const isoDate = d => new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2200); }
+ 
+function daysLeft(s) {
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  return Math.round((new Date(s + 'T00:00') - t) / 864e5);
+}
+function statusOf(x) {
+  if (!x.nextDate) return { k: 'none', cls: 'badge-gray', txt: 'Belum diisi' };
+  const d = daysLeft(x.nextDate);
+  if (d < 0) return { k: 'over', cls: 'badge-red', txt: `Lewat ${-d} hari` };
+  if (d <= 30) return { k: 'soon', cls: 'badge-amber', txt: d === 0 ? 'Hari ini' : `${d} hari lagi` };
+  return { k: 'ok', cls: 'badge-green', txt: 'Valid' };
+}
+ 
+// ═══ RENDER ═══
+function render() {
+  const q = $('f-q').value.trim().toLowerCase(), st = $('f-status').value;
+  const all = items.map(x => ({ x, s: statusOf(x) }));
+  $('st-total').textContent = items.length;
+  $('st-ok').textContent = all.filter(a => a.s.k === 'ok').length;
+  $('st-soon').textContent = all.filter(a => a.s.k === 'soon').length;
+  $('st-over').textContent = all.filter(a => a.s.k === 'over').length;
+ 
+  const rows = all.filter(a => (!st || a.s.k === st) &&
+      (!q || `${a.x.name} ${a.x.brand} ${a.x.no} ${a.x.type}`.toLowerCase().includes(q)))
+    .sort((a, b) => (a.x.nextDate || '9999').localeCompare(b.x.nextDate || '9999') || a.x.name.localeCompare(b.x.name, 'id', { numeric: true }));
+ 
+  const box = $('list');
+  if (!rows.length) {
+    box.innerHTML = `<div class="empty"><div class="big">🧰</div><p>${items.length ? 'Tidak ada alat yang cocok dengan filter.' : 'Belum ada alat. Tambahkan alat pertama.'}</p>${items.length ? '' : '<button class="btn btn-primary" onclick="openForm()">＋ Tambah Alat</button>'}</div>`;
+    return;
+  }
+  box.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Nama Alat</th><th>Merk</th><th>No. Instrumen</th><th>Tipe</th><th>Tgl Kalibrasi</th><th>Tgl Rekalibrasi</th><th>Kalibrasi Selanjutnya</th><th></th></tr></thead>
+    <tbody>${rows.map(({ x, s }) => `<tr>
+      <td class="item-name">${esc(x.name)}</td>
+      <td>${x.brand ? esc(x.brand) : '<span class="dim">—</span>'}</td>
+      <td class="mono">${x.no ? esc(x.no) : '<span class="dim">—</span>'}</td>
+      <td>${x.type ? esc(x.type) : '<span class="dim">—</span>'}</td>
+      <td class="mono">${fmt(x.calDate)}</td>
+      <td class="mono">${fmt(x.recalDate)}</td>
+      <td><div class="next-cell"><span class="mono">${fmt(x.nextDate)}</span><span class="badge ${s.cls}">${s.txt}</span></div></td>
+      <td><div class="actions">
+        <button class="btn btn-sm" onclick="openForm('${x.id}')" aria-label="Edit ${esc(x.name)}">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="del('${x.id}')" aria-label="Hapus ${esc(x.name)}">🗑</button>
+      </div></td></tr>`).join('')}</tbody></table></div>`;
+}
+ 
+// ═══ FORM ═══
+let editingId = null;
+const F = { name: 'm-name', brand: 'm-brand', no: 'm-no', type: 'm-type', calDate: 'm-cal', recalDate: 'm-recal', nextDate: 'm-next' };
+function openForm(id) {
+  editingId = id || null;
+  const x = items.find(i => i.id === id) || {};
+  $('m-title').textContent = id ? 'Edit Alat' : 'Tambah Alat';
+  Object.entries(F).forEach(([k, el]) => $(el).value = x[k] || '');
+  $('modal').classList.add('open');
+  setTimeout(() => $('m-name').focus(), 50);
+}
+function closeForm() { $('modal').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeForm(); });
+ 
+function suggestNext() {
+  if ($('m-next').value) return;
+  const base = $('m-recal').value || $('m-cal').value;
+  if (!base) return;
+  const d = new Date(base + 'T00:00'); d.setFullYear(d.getFullYear() + 1);
+  $('m-next').value = isoDate(d);
+}
+function save() {
+  const x = { id: editingId || uid() };
+  Object.entries(F).forEach(([k, el]) => x[k] = $(el).value.trim());
+  if (!x.name) { toast('Nama alat wajib diisi'); $('m-name').focus(); return; }
+  if (editingId) items = items.map(i => i.id === editingId ? x : i); else items.push(x);
+  persist(); closeForm(); render(); toast(editingId ? 'Alat diperbarui' : 'Alat ditambahkan');
+}
+function del(id) {
+  const x = items.find(i => i.id === id); if (!x) return;
+  if (!confirm(`Hapus "${x.name}" dari daftar?`)) return;
+  items = items.filter(i => i.id !== id); persist(); render(); toast('Alat dihapus');
+}
+ 
+// ═══ EKSPOR ═══
+function exportCSV() {
+  const rows = [['Nama Alat', 'Merk', 'No. Instrumen', 'Tipe', 'Tgl Kalibrasi', 'Tgl Rekalibrasi', 'Kalibrasi Selanjutnya', 'Status']]
+    .concat(items.map(x => [x.name, x.brand, x.no, x.type, x.calDate, x.recalDate, x.nextDate, statusOf(x).txt]));
+  const csv = rows.map(r => r.map(c => `"${String(c ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `instrument-${isoDate(new Date())}.csv`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+ 
+render();
+</script>
+</body>
+</html>
+ 
+Claude finished the response

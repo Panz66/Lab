@@ -1,0 +1,3349 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microbiology · MicroCount — iLaboratories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F2EE;
+    --surface: #FDFCFA;
+    --surface2: #F0EDE8;
+    --border: #DDD9D0;
+    --border-strong: #C5C0B5;
+    --text: #1A1815;
+    --text2: #5C5850;
+    --text3: #9A9489;
+    --accent: #2D6A4F;
+    --accent-light: #E8F5EE;
+    --accent-dark: #1B4332;
+    --amber: #92400E;
+    --amber-light: #FEF3C7;
+    --red: #991B1B;
+    --red-light: #FEE2E2;
+    --blue: #1E40AF;
+    --blue-light: #DBEAFE;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --radius-lg: 16px;
+    --font-body: 'Outfit', sans-serif;
+    --font-display: 'Fraunces', serif;
+    --font-mono: 'DM Mono', monospace;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-theme="dark"] {
+    --bg: #0F1008;
+    --surface: #191A10;
+    --surface2: #22231A;
+    --border: #2E2F24;
+    --border-strong: #3E3F32;
+    --text: #F2F0E8;
+    --text2: #A8A598;
+    --text3: #6B6960;
+    --accent: #52B788;
+    --accent-light: #0D2B1E;
+    --accent-dark: #74C69D;
+    --amber: #FCD34D;
+    --amber-light: #2D1F04;
+    --red: #F87171;
+    --red-light: #2D0A0A;
+    --blue: #93C5FD;
+    --blue-light: #0A1A3A;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .logo:hover { opacity: 0.75; }
+
+  .logo span {
+    color: var(--text3);
+    font-weight: 300;
+    font-size: 1rem;
+    font-style: italic;
+  }
+
+  .topbar-spacer { flex: 1; }
+
+  /* APP SHELL (sidebar + content) */
+  .app-shell {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+    padding: 1.25rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .sidebar-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    padding: 0 10px;
+    margin-bottom: 6px;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .nav-btn {
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .nav-btn.active { background: var(--accent-light); color: var(--accent); }
+
+  .theme-toggle {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+    white-space: nowrap;
+  }
+
+  .theme-toggle:hover { border-color: var(--border-strong); }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 1400px;
+    flex: 1;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .section-subtitle {
+    font-size: 14px;
+    color: var(--text3);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .card-sm {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+
+  /* FORM STYLES */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    letter-spacing: 0.01em;
+  }
+
+  label .required { color: var(--red); margin-left: 2px; }
+
+  input, select, textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: var(--font-body);
+    color: var(--text);
+    width: 100%;
+    transition: var(--transition);
+    outline: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+  }
+
+  select option { background: var(--surface); }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* BUTTONS */
+  .btn {
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text2);
+  }
+
+  .btn-secondary:hover { background: var(--surface2); color: var(--text); }
+
+  .btn-danger {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--red);
+  }
+
+  .btn-danger:hover { background: var(--red-light); border-color: var(--red); }
+
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+  /* BADGE */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    gap: 4px;
+  }
+
+  .badge-green { background: var(--accent-light); color: var(--accent); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-gray { background: var(--surface2); color: var(--text2); }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  .mono { font-family: var(--font-mono); font-size: 13px; }
+
+  /* TOAST */
+  #toast-container {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  .toast {
+    padding: 12px 18px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--shadow-md);
+    animation: slideIn 0.3s ease;
+    pointer-events: all;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 320px;
+  }
+
+  .toast-success { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent); }
+  .toast-error { background: var(--red-light); color: var(--red); border: 1px solid var(--red); }
+  .toast-info { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue); }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    backdrop-filter: blur(2px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+  }
+
+  .modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 20px;
+    line-height: 1;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+  }
+
+  .modal-close:hover { background: var(--surface2); color: var(--text); }
+
+  .modal-body { padding: 1.5rem; }
+
+  .modal-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+
+  /* UPLOAD ZONE */
+  .upload-zone {
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    background: var(--bg);
+  }
+
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .upload-title { font-size: 1.1rem; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .upload-hint { font-size: 13px; color: var(--text3); }
+
+  .image-preview {
+    max-width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    display: none;
+    margin: 0 auto 1rem;
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+
+  /* PROGRESS */
+  .progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* RESULT PANEL */
+  .result-panel { display: none; }
+  .result-panel.show { display: block; }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+
+  .result-metric {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .result-metric .val {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .result-metric .lbl {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+
+  /* QUADRANT */
+  .quadrant-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .quadrant-cell {
+    background: var(--surface);
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .quadrant-cell .q-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .quadrant-cell .q-val { font-family: var(--font-mono); font-size: 1.25rem; font-weight: 500; color: var(--text); }
+
+  /* ANNOTATED IMAGE */
+  .annotated-img {
+    max-width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* SPINNER */
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* LOADING STATE */
+  .loading-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text3);
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text3);
+  }
+
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-title { font-size: 1.1rem; font-weight: 500; color: var(--text2); margin-bottom: 4px; }
+
+  /* SEARCH BAR */
+  .search-bar {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+  }
+
+  /* PAGINATION */
+  .pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  .page-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 14px;
+    transition: var(--transition);
+  }
+
+  .page-btn:hover { background: var(--surface2); }
+  .page-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+
+  .tab {
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: var(--transition);
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: var(--font-body);
+    margin-bottom: -1px;
+  }
+
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* SECTION DIVIDER WITH LABEL */
+  .form-section-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    margin: 1.5rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .form-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* API STATUS DOT */
+  .api-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text3);
+  }
+
+  .status-dot.online { background: var(--accent); }
+  .status-dot.offline { background: var(--red); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .topbar { padding: 0 1rem; }
+    .main { padding: 1rem; }
+    .sidebar {
+      width: 64px;
+      padding: 1rem 0.4rem;
+    }
+    .sidebar-label { display: none; }
+    .nav-btn span { display: none; }
+    .nav-btn { padding: 10px; justify-content: center; }
+  }
+
+  /* ACCORDION for colony detail */
+  .accordion-item { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 0.5rem; }
+  .accordion-header { padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: var(--surface); font-weight: 500; font-size: 14px; }
+  .accordion-header:hover { background: var(--surface2); }
+  .accordion-body { display: none; padding: 12px 16px; background: var(--bg); border-top: 1px solid var(--border); font-size: 13px; }
+  .accordion-body.open { display: block; }
+
+  /* QC METER */
+  .qc-meter { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
+  .qc-bar-wrap { flex: 1; background: var(--surface2); border-radius: 3px; height: 6px; }
+  .qc-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+  .qc-val { font-family: var(--font-mono); font-size: 12px; color: var(--text3); min-width: 36px; text-align: right; }
+
+  /* REPORT BUTTONS */
+  .report-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  /* CONFIRM DIALOG styling reuse modal */
+  #confirm-overlay .modal { max-width: 400px; }
+
+  /* ── DEVELOPMENT PAGE ── */
+  .dev-ctrl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .dev-ctrl-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  .dev-ctrl-card .ctrl-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dev-ctrl-card .ctrl-label .ctrl-badge {
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+  .file-slot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 13px;
+    color: var(--text3);
+    position: relative;
+    overflow: hidden;
+  }
+  .file-slot:hover { border-color: var(--accent); color: var(--text); }
+  .file-slot.filled { border-style: solid; border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .file-slot input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .file-slot .slot-icon { font-size: 16px; flex-shrink: 0; }
+  .file-slot .slot-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-slot .slot-clear { font-size: 16px; cursor: pointer; flex-shrink: 0; color: var(--text3); pointer-events: all; z-index: 2; position: relative; }
+  .dev-result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .dev-result-header {
+    padding: 0.75rem 1rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .dev-result-body { padding: 1rem; }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row .stat-key { color: var(--text2); }
+  .stat-row .stat-val { font-family: var(--font-mono); font-weight: 500; }
+  .recovery-banner {
+    padding: 1rem;
+    border-radius: var(--radius);
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  .recovery-pass { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent); }
+  .recovery-fail { background: var(--red-light); color: var(--red); border: 1px solid var(--red); }
+  .recovery-warn { background: var(--amber-light); color: var(--amber); border: 1px solid var(--amber); }
+  .dev-bulk-progress {
+    display: none;
+    margin: 1rem 0;
+  }
+  .dev-photo-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--accent);
+    color: white;
+    flex-shrink: 0;
+  }
+  .sessions-table-wrap { overflow-x: auto; }
+  .session-row-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+
+  /* ── MODE SELECTOR ── */
+  .mode-selector { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+  .mode-card {
+    flex: 1; padding: 1.25rem 1.5rem;
+    border: 2px solid var(--border); border-radius: var(--radius-lg);
+    background: var(--surface); cursor: pointer; transition: var(--transition);
+    text-align: left; font-family: var(--font-body); position: relative; overflow: hidden;
+  }
+  .mode-card:hover { border-color: var(--accent); background: var(--accent-light); }
+  .mode-card.selected { border-color: var(--accent); background: var(--accent-light); }
+  .mode-card.selected::after {
+    content: "✓"; position: absolute; top: 12px; right: 14px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); color: white; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; font-weight: 700;
+    line-height: 22px; text-align: center;
+  }
+  .mode-card .mode-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .mode-card .mode-title { font-weight: 600; font-size: 15px; color: var(--text); margin-bottom: 4px; }
+  .mode-card .mode-desc { font-size: 13px; color: var(--text3); line-height: 1.5; }
+  .mode-divider { height: 1px; background: var(--border); margin: 0 0 1.5rem; }
+  .quali-result-card { border: 2px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 0.75rem; }
+  .quali-result-header { padding: 0.75rem 1rem; font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .quali-result-body { padding: 1rem; }
+  .quali-pos { border-color: var(--accent); }
+  .quali-pos .quali-result-header { background: var(--accent-light); color: var(--accent); }
+  .quali-neg { border-color: var(--red); }
+  .quali-neg .quali-result-header { background: var(--red-light); color: var(--red); }
+  .quali-warn { border-color: var(--amber); }
+  .quali-warn .quali-result-header { background: var(--amber-light); color: var(--amber); }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="ilaboratories.html" style="display:flex;align-items:center;gap:6px;color:var(--text3);text-decoration:none;font-size:13px;font-weight:500;padding:6px 10px;border-radius:var(--radius-sm);transition:var(--transition);white-space:nowrap" onmouseover="this.style.background='var(--surface2)';this.style.color='var(--text)'" onmouseout="this.style.background='transparent';this.style.color='var(--text3)'">
+    ← <span>iLaboratories</span>
+  </a>
+  <div style="width:1px;height:24px;background:var(--border)"></div>
+  <div class="logo" onclick="goPage('dashboard')" title="Ke Dashboard">MicroCount <span>colony counter</span></div>
+  <div class="topbar-spacer"></div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="api-status">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Menghubungkan...</span>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </div>
+</header>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Menu</div>
+    <nav class="nav">
+      <button class="nav-btn" onclick="goPage('analyze')" id="nav-analyze">
+        🔬 <span>Analisis</span>
+      </button>
+      <button class="nav-btn" onclick="goPage('samples')" id="nav-samples">
+        🧫 <span>Sampel</span>
+      </button>
+      <button class="nav-btn" onclick="goPage('development')" id="nav-development">
+        🧪 <span>Pengembangan</span>
+      </button>
+      <button class="nav-btn" onclick="goPage('history')" id="nav-history">
+        📋 <span>Riwayat</span>
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+  <!-- ════════════════════════════════════════ DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Dashboard</div>
+        <div class="section-subtitle">Ikhtisar analisis mikrobial</div>
+      </div>
+      <button class="btn btn-primary" onclick="goPage('analyze')">+ Analisis Baru</button>
+    </div>
+
+    <div class="stats-row" id="dashboard-stats">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-analyses">—</div>
+        <div class="stat-label">Total Analisis</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-samples">—</div>
+        <div class="stat-label">Total Sampel</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-colonies">—</div>
+        <div class="stat-label">Total Koloni</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text)">Analisis Terbaru</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Koloni</th>
+              <th>CFU/mL</th>
+              <th>QC Grade</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody id="recent-tbody">
+            <tr><td colspan="5" class="empty-state">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ ANALYZE PAGE -->
+  <div class="page" id="page-analyze">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Analisis Baru</div>
+        <div class="section-subtitle">Upload foto cawan petri & isi metadata sampel</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem" id="analyze-grid">
+
+      <!-- LEFT: FORM -->
+      <div>
+        <div class="card">
+          <!-- Upload Zone -->
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChange(event)">
+            <img class="image-preview" id="image-preview" alt="Preview">
+            <div id="upload-placeholder">
+              <div class="upload-icon">📷</div>
+              <div class="upload-title">Upload Foto Cawan Petri</div>
+              <div class="upload-hint">JPG, PNG, WEBP — maks. 10MB</div>
+            </div>
+          </div>
+
+          <div id="progress-area" style="display:none;margin-top:1rem">
+            <div style="font-size:13px;color:var(--text3);margin-bottom:4px" id="progress-label">Menganalisis...</div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          </div>
+
+          <hr class="divider">
+
+          <!-- METADATA FORM -->
+          <div class="form-section-label">Informasi Sampel</div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nama Sampel <span class="required">*</span></label>
+              <input type="text" id="f-sample-name" placeholder="mis. Tablet Amoksisilin Batch A" value="Sample">
+            </div>
+            <div class="form-group">
+              <label>Analis <span class="required">*</span></label>
+              <input type="text" id="f-analyst" placeholder="Nama analis" value="Analis">
+            </div>
+            <div class="form-group">
+              <label>Jenis Sediaan Farmasi</label>
+              <select id="f-organism-type">
+                <option value="">— Pilih Jenis —</option>
+                <optgroup label="Sediaan Padat">
+                  <option value="tablet">Tablet</option>
+                  <option value="tablet_salut">Tablet Salut (Film/Enterik)</option>
+                  <option value="kapsul">Kapsul</option>
+                  <option value="serbuk">Serbuk / Granul</option>
+                </optgroup>
+                <optgroup label="Sediaan Cair">
+                  <option value="sirup">Sirup</option>
+                  <option value="suspensi">Suspensi</option>
+                  <option value="emulsi">Emulsi</option>
+                  <option value="larutan_oral">Larutan Oral</option>
+                  <option value="injeksi">Injeksi / Infus</option>
+                  <option value="tetes_mata">Tetes Mata</option>
+                  <option value="tetes_telinga">Tetes Telinga</option>
+                </optgroup>
+                <optgroup label="Sediaan Semi-Padat">
+                  <option value="salep">Salep</option>
+                  <option value="krim">Krim</option>
+                  <option value="gel">Gel</option>
+                  <option value="pasta">Pasta</option>
+                </optgroup>
+                <optgroup label="Lainnya">
+                  <option value="supositoria">Supositoria</option>
+                  <option value="aerosol">Aerosol / Inhaler</option>
+                  <option value="bahan_baku">Bahan Baku Aktif (API)</option>
+                  <option value="bahan_penolong">Bahan Penolong / Eksipien</option>
+                  <option value="produk_steril">Produk Steril Non-injeksi</option>
+                  <option value="lainnya">Lainnya</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Jenis Media Kultur</label>
+              <select id="f-media-type">
+                <option value="">— Pilih Media —</option>
+                <optgroup label="Media Umum">
+                  <option value="tsa">TSA (Tryptic Soy Agar)</option>
+                  <option value="tsb">TSB (Tryptic Soy Broth)</option>
+                  <option value="na">NA (Nutrient Agar)</option>
+                  <option value="nb">NB (Nutrient Broth)</option>
+                  <option value="pca">PCA (Plate Count Agar)</option>
+                  <option value="r2a">R2A Agar</option>
+                </optgroup>
+                <optgroup label="Media Selektif">
+                  <option value="sda">SDA (Sabouraud Dextrose Agar) — Jamur</option>
+                  <option value="mac">MacConkey Agar — Gram negatif</option>
+                  <option value="bpda">BPDA (Baird-Parker) — Staphylococcus</option>
+                  <option value="vrba">VRBA — Enterobacteriaceae</option>
+                  <option value="msa">MSA (Mannitol Salt Agar)</option>
+                  <option value="eme">EMB Agar — E. coli / Gram negatif</option>
+                  <option value="cled">CLED Agar</option>
+                  <option value="columbia">Columbia Blood Agar</option>
+                  <option value="chocolate">Chocolate Agar</option>
+                </optgroup>
+                <optgroup label="Media Khusus">
+                  <option value="chromocult">ChromoCult (coliform)</option>
+                  <option value="m-endo">M-Endo (coliform air)</option>
+                  <option value="lainnya_media">Lainnya</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Label Sampel</label>
+              <input type="text" id="f-sample-label" placeholder="mis. Lot 2024-01, No. Bets 123">
+            </div>
+            <div class="form-group">
+              <label>Tautkan ke Sampel (opsional)</label>
+              <select id="f-sample-id">
+                <option value="">— Tidak ditautkan —</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section-label">Parameter Pengenceran & Inokulasi</div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Faktor Pengenceran</label>
+              <input type="number" id="f-dilution" value="1" min="1" step="1">
+            </div>
+            <div class="form-group">
+              <label>Volume Inokulasi (mL)</label>
+              <input type="number" id="f-volume" value="1.0" min="0.001" step="0.001">
+            </div>
+          </div>
+
+          <div class="form-section-label">Tanggal & Catatan</div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Tanggal Inokulasi</label>
+              <input type="date" id="f-incubation-date">
+            </div>
+            <div class="form-group">
+              <label>Tanggal Pembacaan</label>
+              <input type="date" id="f-observation-date">
+            </div>
+            <div class="form-group full">
+              <label>Catatan</label>
+              <textarea id="f-notes" placeholder="Kondisi inkubasi, suhu, keterangan tambahan..."></textarea>
+            </div>
+          </div>
+
+          <div style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="submitAnalysis()" id="submit-btn">
+              🔬 Mulai Analisis
+            </button>
+            <button class="btn btn-secondary" onclick="resetAnalysisForm()">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: RESULT -->
+      <div>
+        <div class="card result-panel" id="result-panel">
+          <div style="font-weight:600;font-size:15px;margin-bottom:0.5rem">Hasil Analisis</div>
+          <div id="analysis-id-display" class="mono" style="font-size:12px;color:var(--text3);margin-bottom:1rem"></div>
+
+          <img class="annotated-img" id="annotated-img" alt="Annotated">
+
+          <div class="result-grid" id="result-metrics"></div>
+
+          <hr class="divider">
+
+          <div style="font-weight:500;font-size:14px;margin-bottom:0.75rem">Distribusi per Kuadran</div>
+          <div class="quadrant-grid" id="quadrant-display"></div>
+
+          <hr class="divider">
+
+          <div style="font-weight:500;font-size:14px;margin-bottom:0.75rem">Quality Control</div>
+          <div id="qc-display"></div>
+
+          <hr class="divider">
+
+          <div style="font-weight:500;font-size:14px;margin-bottom:0.75rem">Morfologi Koloni</div>
+          <div id="morph-display"></div>
+
+          <hr class="divider">
+
+          <div style="font-weight:500;font-size:14px;margin-bottom:0.75rem">Unduh Laporan</div>
+          <div class="report-buttons" id="report-buttons"></div>
+        </div>
+
+        <div class="card" id="result-placeholder" style="text-align:center;padding:4rem 2rem;color:var(--text3)">
+          <div style="font-size:4rem;margin-bottom:1rem">🧫</div>
+          <div style="font-size:1rem;font-weight:500;color:var(--text2)">Hasil analisis akan muncul di sini</div>
+          <div style="font-size:13px;margin-top:6px">Upload foto cawan petri dan isi form di sebelah kiri</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ SAMPLES PAGE -->
+  <div class="page" id="page-samples">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Manajemen Sampel</div>
+        <div class="section-subtitle">Buat dan kelola data sampel pengujian</div>
+      </div>
+      <button class="btn btn-primary" onclick="openSampleModal()">+ Tambah Sampel</button>
+    </div>
+
+    <div class="card">
+      <div class="search-bar" style="margin-bottom:1rem">
+        <input class="search-input" type="text" id="sample-search" placeholder="Cari nama sampel..." oninput="filterSamples()">
+        <span style="font-size:13px;color:var(--text3)" id="sample-count-label"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama Sampel</th>
+              <th>Analis</th>
+              <th>Media</th>
+              <th>Organisme</th>
+              <th>Dibuat</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="samples-tbody">
+            <tr><td colspan="6"><div class="loading-state"><div class="spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="samples-pagination"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════ HISTORY PAGE -->
+  <div class="page" id="page-history">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Riwayat Analisis</div>
+        <div class="section-subtitle">Semua analisis yang telah dilakukan</div>
+      </div>
+      <button class="btn btn-secondary" onclick="loadHistory()">⟳ Refresh</button>
+    </div>
+
+    <div class="card">
+      <div class="search-bar" style="margin-bottom:1rem">
+        <input class="search-input" type="text" id="history-search" placeholder="Cari nama sampel...">
+        <select style="max-width:160px" id="history-filter-qc" onchange="filterHistory()">
+          <option value="">Semua QC Grade</option>
+          <option value="A">Grade A (Excellent)</option>
+          <option value="B">Grade B (Good)</option>
+          <option value="C">Grade C (Acceptable)</option>
+          <option value="D">Grade D (Poor)</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama Sampel</th>
+              <th>File</th>
+              <th>Koloni</th>
+              <th>CFU/mL</th>
+              <th>QC</th>
+              <th>Waktu</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <tr><td colspan="8"><div class="loading-state"><div class="spinner"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="history-pagination"></div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════ DEVELOPMENT PAGE -->
+  <div class="page" id="page-development">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Pengembangan Metode</div>
+        <div class="section-subtitle">Analisis bulk validasi farmasi — Mean, RSD &amp; % Recovery · Riwayat tersimpan di halaman <strong>Sampel</strong> &amp; <strong>Riwayat</strong></div>
+      </div>
+    </div>
+
+    <!-- MODE SELECTOR -->
+    <div class="mode-selector" id="dev-mode-selector">
+      <button class="mode-card selected" id="mode-kuanti" onclick="selectDevMode('kuanti')">
+        <div class="mode-icon">🔬</div>
+        <div class="mode-title">Kuantitatif</div>
+        <div class="mode-desc">Deteksi & hitung koloni otomatis dengan YOLO. Hasil: Mean CFU/mL, RSD, % Recovery.</div>
+      </button>
+      <button class="mode-card" id="mode-kuali" onclick="selectDevMode('kuali')">
+        <div class="mode-icon">🧬</div>
+        <div class="mode-title">Kualitatif</div>
+        <div class="mode-desc">Deteksi pertumbuhan menggunakan Gemini AI. Hasil: Positif / Negatif per kelompok kontrol.</div>
+      </button>
+    </div>
+    <div class="mode-divider"></div>
+
+    <!-- TABS (Riwayat Sesi dipindah ke navbar Riwayat) -->
+
+    <!-- TAB: SESI BARU -->
+    <div id="dev-tab-content-new">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem" id="dev-main-grid">
+
+        <!-- LEFT: FORM INPUT -->
+        <div>
+          <div class="card" style="margin-bottom:1.5rem">
+            <div class="form-section-label" style="margin-top:0">Data Sampel &amp; Parameter</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nama Sampel <span class="required">*</span></label>
+                <input type="text" id="dev-sample-name" placeholder="mis. Tablet Amoksisilin Batch B">
+              </div>
+              <div class="form-group">
+                <label>Analis <span class="required">*</span></label>
+                <input type="text" id="dev-analyst" placeholder="Nama analis">
+              </div>
+              <div class="form-group">
+                <label>Jenis Sediaan</label>
+                <select id="dev-organism-type">
+                  <option value="">— Pilih —</option>
+                  <option value="tablet">Tablet</option>
+                  <option value="kapsul">Kapsul</option>
+                  <option value="sirup">Sirup</option>
+                  <option value="suspensi">Suspensi</option>
+                  <option value="injeksi">Injeksi</option>
+                  <option value="salep">Salep/Krim</option>
+                  <option value="bahan_baku">Bahan Baku (API)</option>
+                  <option value="lainnya">Lainnya</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Media Kultur</label>
+                <select id="dev-media-type">
+                  <option value="">— Pilih —</option>
+                  <option value="TSA">TSA</option>
+                  <option value="NA">NA</option>
+                  <option value="PCA">PCA</option>
+                  <option value="SDA">SDA</option>
+                  <option value="MacConkey">MacConkey</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Faktor Pengenceran</label>
+                <input type="number" id="dev-dilution" value="1" min="1">
+              </div>
+              <div class="form-group">
+                <label>Volume Inokulasi (mL)</label>
+                <input type="number" id="dev-volume" value="1.0" min="0.001" step="0.001">
+              </div>
+              <div class="form-group">
+                <label>Tanggal Inkubasi</label>
+                <input type="date" id="dev-incubation-date">
+              </div>
+              <div class="form-group">
+                <label>Tanggal Pembacaan</label>
+                <input type="date" id="dev-observation-date">
+              </div>
+              <div class="form-group full">
+                <label>Catatan</label>
+                <textarea id="dev-notes" placeholder="Kondisi validasi, batch, keterangan..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="form-section-label" style="margin-top:0">Upload Foto Kontrol</div>
+            <p style="font-size:13px;color:var(--text3);margin-bottom:1rem">
+              Unggah foto sesuai kelompok kontrol di bawah. Semua foto wajib diisi sebelum analisis dimulai.
+            </p>
+
+            <div class="dev-ctrl-grid">
+              <!-- Kontrol Positif Produk: 3 foto -->
+              <div class="dev-ctrl-card">
+                <div class="ctrl-label">
+                  <span class="ctrl-badge badge badge-green">KP Produk</span>
+                  Kontrol Positif Produk
+                  <span class="dev-photo-count">3</span>
+                </div>
+                <div id="slots-positive_product"></div>
+              </div>
+
+              <!-- Kontrol Negatif Produk: 2 foto -->
+              <div class="dev-ctrl-card">
+                <div class="ctrl-label">
+                  <span class="ctrl-badge badge badge-red">KN Produk</span>
+                  Kontrol Negatif Produk
+                  <span class="dev-photo-count">2</span>
+                </div>
+                <div id="slots-negative_product"></div>
+              </div>
+
+              <!-- Kontrol Negatif Media: 2 foto -->
+              <div class="dev-ctrl-card">
+                <div class="ctrl-label">
+                  <span class="ctrl-badge badge badge-amber">KN Media</span>
+                  Kontrol Negatif Media
+                  <span class="dev-photo-count">2</span>
+                </div>
+                <div id="slots-negative_media"></div>
+              </div>
+
+              <!-- Kontrol Positif Media: 2 foto -->
+              <div class="dev-ctrl-card">
+                <div class="ctrl-label">
+                  <span class="ctrl-badge badge badge-blue">KP Media</span>
+                  Kontrol Positif Media
+                  <span class="dev-photo-count">2</span>
+                </div>
+                <div id="slots-positive_media"></div>
+              </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="dev-bulk-progress" id="dev-progress">
+              <div style="font-size:13px;color:var(--text3);margin-bottom:4px" id="dev-progress-label">Memproses foto...</div>
+              <div class="progress-bar"><div class="progress-fill" id="dev-progress-fill"></div></div>
+              <div style="font-size:12px;color:var(--text3);margin-top:4px" id="dev-progress-detail"></div>
+            </div>
+
+            <div style="margin-top:1rem;display:flex;gap:0.75rem;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="submitDevSession()" id="dev-submit-btn">
+                🧪 Mulai Analisis Bulk
+              </button>
+              <button class="btn btn-secondary" onclick="resetDevForm()">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: HASIL -->
+        <div id="dev-result-area">
+          <div id="dev-result-placeholder" class="card" style="text-align:center;padding:4rem 2rem;color:var(--text3)">
+            <div style="font-size:4rem;margin-bottom:1rem">🧪</div>
+            <div style="font-size:1rem;font-weight:500;color:var(--text2)">Hasil validasi akan muncul di sini</div>
+            <div style="font-size:13px;margin-top:6px">Isi form dan upload 9 foto kontrol, lalu klik Mulai Analisis Bulk</div>
+          </div>
+          <div id="dev-result-panel" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KUALITATIF FORM (hidden by default) -->
+    <div id="dev-kuali-content" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+
+        <!-- LEFT: FORM KUALITATIF -->
+        <div>
+          <div class="card" style="margin-bottom:1.5rem">
+            <div class="form-section-label" style="margin-top:0">Data Sampel &amp; Parameter</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nama Sampel <span class="required">*</span></label>
+                <input type="text" id="kuali-sample-name" placeholder="mis. Tablet Amoksisilin Batch B">
+              </div>
+              <div class="form-group">
+                <label>Analis <span class="required">*</span></label>
+                <input type="text" id="kuali-analyst" placeholder="Nama analis">
+              </div>
+              <div class="form-group">
+                <label>Jenis Sediaan</label>
+                <select id="kuali-organism-type">
+                  <option value="">— Pilih —</option>
+                  <option value="tablet">Tablet</option>
+                  <option value="kapsul">Kapsul</option>
+                  <option value="sirup">Sirup</option>
+                  <option value="suspensi">Suspensi</option>
+                  <option value="injeksi">Injeksi</option>
+                  <option value="salep">Salep/Krim</option>
+                  <option value="bahan_baku">Bahan Baku (API)</option>
+                  <option value="lainnya">Lainnya</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Media Kultur</label>
+                <select id="kuali-media-type">
+                  <option value="">— Pilih —</option>
+                  <option value="TSA">TSA</option>
+                  <option value="NA">NA</option>
+                  <option value="PCA">PCA</option>
+                  <option value="SDA">SDA</option>
+                  <option value="MacConkey">MacConkey</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Tanggal Inkubasi</label>
+                <input type="date" id="kuali-incubation-date">
+              </div>
+              <div class="form-group">
+                <label>Tanggal Pembacaan</label>
+                <input type="date" id="kuali-observation-date">
+              </div>
+              <div class="form-group full">
+                <label>Catatan</label>
+                <textarea id="kuali-notes" placeholder="Kondisi validasi, batch, keterangan..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="form-section-label" style="margin-top:0">Upload Foto Kontrol</div>
+            <p style="font-size:13px;color:var(--text3);margin-bottom:1rem">
+              Unggah foto sesuai kelompok kontrol. YOLO akan menganalisis pertumbuhan koloni secara kualitatif (Positif = ada koloni, Negatif = tidak ada koloni).
+            </p>
+
+            <div class="dev-ctrl-grid">
+              <div class="dev-ctrl-card">
+                <div class="ctrl-label">
+                  <span class="ctrl-badge badge badge-green">KP Produk</span>
+                  Kontrol Positif Produk
+                  <span class="dev-photo-count">3</span>
+                </div>
+                <div id="kuali-slots-positive_product"></div>
+              </div>
+              <div class="dev-ctrl-card">
+                <div class="ctrl-label">
+                  <span class="ctrl-badge badge badge-red">KN Produk</span>
+                  Kontrol Negatif Produk
+                  <span class="dev-photo-count">2</span>
+                </div>
+                <div id="kuali-slots-negative_product"></div>
+              </div>
+              <div class="dev-ctrl-card">
+                <div class="ctrl-label">
+                  <span class="ctrl-badge badge badge-amber">KN Media</span>
+                  Kontrol Negatif Media
+                  <span class="dev-photo-count">2</span>
+                </div>
+                <div id="kuali-slots-negative_media"></div>
+              </div>
+              <div class="dev-ctrl-card">
+                <div class="ctrl-label">
+                  <span class="ctrl-badge badge badge-blue">KP Media</span>
+                  Kontrol Positif Media
+                  <span class="dev-photo-count">2</span>
+                </div>
+                <div id="kuali-slots-positive_media"></div>
+              </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="dev-bulk-progress" id="kuali-progress">
+              <div style="font-size:13px;color:var(--text3);margin-bottom:4px" id="kuali-progress-label">Memproses foto...</div>
+              <div class="progress-bar"><div class="progress-fill" id="kuali-progress-fill"></div></div>
+              <div style="font-size:12px;color:var(--text3);margin-top:4px" id="kuali-progress-detail"></div>
+            </div>
+
+            <div style="margin-top:1rem;display:flex;gap:0.75rem;flex-wrap:wrap">
+              <button class="btn btn-primary" onclick="submitKualiSession()" id="kuali-submit-btn">
+                🧬 Mulai Analisis Kualitatif
+              </button>
+              <button class="btn btn-secondary" onclick="resetKualiForm()">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: HASIL KUALITATIF -->
+        <div id="kuali-result-area">
+          <div id="kuali-result-placeholder" class="card" style="text-align:center;padding:4rem 2rem;color:var(--text3)">
+            <div style="font-size:4rem;margin-bottom:1rem">🧬</div>
+            <div style="font-size:1rem;font-weight:500;color:var(--text2)">Hasil kualitatif akan muncul di sini</div>
+            <div style="font-size:13px;margin-top:6px">Gemini AI akan mendeteksi ada/tidaknya pertumbuhan koloni</div>
+          </div>
+          <div id="kuali-result-panel" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- ═══ MODAL: ADD/EDIT SAMPLE ═══ -->
+<div class="modal-overlay" id="sample-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="sample-modal-title">Tambah Sampel</div>
+      <button class="modal-close" onclick="closeModal('sample-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="sm-id">
+
+      <div class="form-section-label">Identitas Sampel</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nama Sampel <span class="required">*</span></label>
+          <input type="text" id="sm-name" placeholder="mis. Sirup Ambroxol Bets 241001">
+        </div>
+        <div class="form-group">
+          <label>Nama Analis <span class="required">*</span></label>
+          <input type="text" id="sm-analyst" placeholder="mis. Dr. Budi Santoso">
+        </div>
+        <div class="form-group">
+          <label>Jenis Media</label>
+          <select id="sm-media-type">
+            <option value="">— Pilih —</option>
+            <option value="NA">Nutrient Agar (NA)</option>
+            <option value="PCA">Plate Count Agar (PCA)</option>
+            <option value="TSA">Tryptic Soy Agar (TSA)</option>
+            <option value="MHA">Mueller-Hinton Agar (MHA)</option>
+            <option value="SDA">Sabouraud Dextrose Agar (SDA)</option>
+            <option value="MacConkey">MacConkey Agar</option>
+            <option value="VRBA">VRBA</option>
+            <option value="lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Jenis Organisme Target</label>
+          <select id="sm-organism-type">
+            <option value="">— Pilih —</option>
+            <option value="TAMC">TAMC (Total Aerobic Microbial Count)</option>
+            <option value="TYMC">TYMC (Yeast &amp; Mould)</option>
+            <option value="E.coli">E. coli</option>
+            <option value="Salmonella">Salmonella</option>
+            <option value="S.aureus">S. aureus</option>
+            <option value="P.aeruginosa">P. aeruginosa</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tanggal Inkubasi</label>
+          <input type="date" id="sm-incubation-date">
+        </div>
+        <div class="form-group">
+          <label>Tanggal Pengamatan</label>
+          <input type="date" id="sm-observation-date">
+        </div>
+        <div class="form-group full">
+          <label>Catatan</label>
+          <textarea id="sm-notes" placeholder="Kondisi inkubasi, suhu, keterangan tambahan..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('sample-modal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveSample()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: VIEW ANALYSIS DETAIL ═══ -->
+<div class="modal-overlay" id="detail-modal" style="align-items:flex-start;padding-top:4rem">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <div class="modal-title">Detail Analisis</div>
+      <button class="modal-close" onclick="closeModal('detail-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="detail-modal-body">
+      <div class="loading-state"><div class="spinner"></div> Memuat...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CONFIRM DIALOG ═══ -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="confirm-title">Konfirmasi</div>
+      <button class="modal-close" onclick="closeModal('confirm-overlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message" style="color:var(--text2);font-size:15px"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('confirm-overlay')">Batal</button>
+      <button class="btn btn-danger" id="confirm-action-btn">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════
+const API = window.location.origin; // Same origin as FastAPI backend
+let currentAnalysisId = null;
+let samplesData = [];
+let samplesFiltered = [];
+let samplesPage = 1;
+const PER_PAGE = 10;
+let historyData = [];
+let historyFiltered = [];
+let historyPage = 1;
+
+// ═══════════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════════
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-icon').textContent = isDark ? '🌙' : '☀️';
+  document.getElementById('theme-label').textContent = isDark ? 'Dark' : 'Light';
+  localStorage.setItem('mc-theme', isDark ? 'light' : 'dark');
+}
+
+(function initTheme() {
+  const saved = localStorage.getItem('mc-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  document.getElementById('theme-icon').textContent = saved === 'dark' ? '☀️' : '🌙';
+  document.getElementById('theme-label').textContent = saved === 'dark' ? 'Light' : 'Dark';
+})();
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const pageEl = document.getElementById('page-' + name);
+  const navEl  = document.getElementById('nav-' + name);
+  if (pageEl) pageEl.classList.add('active');
+  if (navEl)  navEl.classList.add('active');
+  if (name === 'dashboard')   loadDashboard();
+  if (name === 'samples')     loadSamples();
+  if (name === 'history')     loadHistory();
+  if (name === 'analyze')     loadSampleOptions();
+  if (name === 'development') { initDevSlots(); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════
+function toast(msg, type = 'info') {
+  const tc = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span> ${msg}`;
+  tc.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function confirm(title, msg, onConfirm) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-message').textContent = msg;
+  const btn = document.getElementById('confirm-action-btn');
+  btn.onclick = () => { closeModal('confirm-overlay'); onConfirm(); };
+  openModal('confirm-overlay');
+}
+
+// ═══════════════════════════════════════════════════════════
+// API HEALTH CHECK
+// ═══════════════════════════════════════════════════════════
+async function checkHealth() {
+  try {
+    const r = await fetch(`${API}/api/health`, { signal: AbortSignal.timeout(5000) });
+    if (r.ok) {
+      document.getElementById('status-dot').className = 'status-dot online';
+      document.getElementById('status-text').textContent = 'Online';
+    } else {
+      throw new Error();
+    }
+  } catch {
+    document.getElementById('status-dot').className = 'status-dot offline';
+    document.getElementById('status-text').textContent = 'Offline';
+  }
+}
+
+setInterval(checkHealth, 30000);
+checkHealth();
+
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════
+async function loadDashboard() {
+  try {
+    const r = await fetch(`${API}/api/stats/dashboard`);
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    document.getElementById('stat-analyses').textContent = d.total_analyses.toLocaleString();
+    document.getElementById('stat-samples').textContent = d.total_samples.toLocaleString();
+    document.getElementById('stat-colonies').textContent = d.total_colonies_counted.toLocaleString();
+    const tbody = document.getElementById('recent-tbody');
+    if (!d.recent_analyses.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Belum ada analisis</div></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = d.recent_analyses.map(a => `
+      <tr>
+        <td><span class="mono" style="font-size:13px">${escHtml(a.filename || '—')}</span></td>
+        <td><strong>${a.total_colonies}</strong></td>
+        <td class="mono">${escHtml(a.cfu_formatted || '—')}</td>
+        <td>${qcBadge(a.qc_grade)}</td>
+        <td style="font-size:13px;color:var(--text3)">${formatTime(a.created_at)}</td>
+      </tr>
+    `).join('');
+  } catch {
+    toast('Gagal memuat dashboard. Pastikan server berjalan.', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILE UPLOAD / ANALYSIS
+// ═══════════════════════════════════════════════════════════
+function onFileChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const prev = document.getElementById('image-preview');
+  const placeholder = document.getElementById('upload-placeholder');
+  const reader = new FileReader();
+  reader.onload = ev => {
+    prev.src = ev.target.result;
+    prev.style.display = 'block';
+    placeholder.style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+// Drag & drop
+const zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+zone.addEventListener('drop', e => {
+  e.preventDefault();
+  zone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    document.getElementById('file-input').files = e.dataTransfer.files;
+    onFileChange({ target: { files: e.dataTransfer.files } });
+  }
+});
+
+function animateProgress() {
+  const fill = document.getElementById('progress-fill');
+  const label = document.getElementById('progress-label');
+  const steps = [
+    [10, 'Mengunggah gambar...'],
+    [30, 'Mendeteksi cawan petri...'],
+    [55, 'Mendeteksi koloni...'],
+    [75, 'Menghitung CFU...'],
+    [90, 'Menganalisis morfologi...'],
+    [95, 'Menyimpan hasil...'],
+  ];
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < steps.length) {
+      fill.style.width = steps[i][0] + '%';
+      label.textContent = steps[i][1];
+      i++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 800);
+  return interval;
+}
+
+async function submitAnalysis() {
+  const file = document.getElementById('file-input').files[0];
+  if (!file) { toast('Pilih foto cawan petri terlebih dahulu', 'error'); return; }
+
+  const sampleName = document.getElementById('f-sample-name').value.trim() || 'Sample';
+  const analyst = document.getElementById('f-analyst').value.trim() || 'Analis';
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('sample_name', sampleName);
+  formData.append('analyst', analyst);
+  formData.append('dilution_factor', document.getElementById('f-dilution').value);
+  formData.append('inoculation_volume_ml', document.getElementById('f-volume').value);
+
+  const orgType = document.getElementById('f-organism-type').value;
+  const mediaType = document.getElementById('f-media-type').value;
+  // BUGFIX: hanya kirim sample_id jika benar-benar ada nilai (bukan string kosong)
+  const sampleId = document.getElementById('f-sample-id').value.trim();
+  const incDate = document.getElementById('f-incubation-date').value;
+  const obsDate = document.getElementById('f-observation-date').value;
+  const notes = document.getElementById('f-notes').value.trim();
+
+  if (orgType) formData.append('organism_type', orgType);
+  if (mediaType) formData.append('media_type', mediaType);
+  if (sampleId && sampleId !== '') formData.append('sample_id', sampleId); // BUGFIX: skip jika kosong
+  if (incDate) formData.append('incubation_date', incDate);
+  if (obsDate) formData.append('observation_date', obsDate);
+  if (notes) formData.append('notes', notes);
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Menganalisis...';
+
+  document.getElementById('progress-area').style.display = 'block';
+  document.getElementById('result-panel').classList.remove('show');
+  document.getElementById('result-placeholder').style.display = 'block';
+
+  const progressInterval = animateProgress();
+
+  try {
+    const r = await fetch(`${API}/api/analyze`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    clearInterval(progressInterval);
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-label').textContent = 'Selesai!';
+
+    if (!r.ok) {
+      let errMsg = `HTTP ${r.status}`;
+      try { const err = await r.json(); errMsg = err.detail || errMsg; } catch {}
+      throw new Error(errMsg);
+    }
+
+    const data = await r.json();
+    currentAnalysisId = data.analysis_id;
+    renderResult(data.result, data.analysis_id);
+    toast(`Analisis selesai — ${data.result.total_colonies} koloni terdeteksi`, 'success');
+
+    setTimeout(() => { document.getElementById('progress-area').style.display = 'none'; }, 1500);
+
+  } catch (e) {
+    clearInterval(progressInterval);
+    document.getElementById('progress-area').style.display = 'none';
+    toast('Analisis gagal: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔬 Mulai Analisis';
+  }
+}
+
+function renderResult(r, analysisId) {
+  document.getElementById('result-placeholder').style.display = 'none';
+  document.getElementById('result-panel').classList.add('show');
+  document.getElementById('analysis-id-display').textContent = 'ID: ' + analysisId;
+
+  // Annotated image
+  const img = document.getElementById('annotated-img');
+  img.src = `${API}/api/images/${analysisId}/annotated?t=${Date.now()}`;
+  img.style.display = 'block';
+  img.onerror = () => { img.style.display = 'none'; };
+
+  // Metrics
+  document.getElementById('result-metrics').innerHTML = `
+    <div class="result-metric"><div class="val">${r.total_colonies}</div><div class="lbl">Total Koloni</div></div>
+    <div class="result-metric"><div class="val" style="font-size:1rem">${escHtml(r.cfu?.cfu_per_ml_formatted || '—')}</div><div class="lbl">CFU/mL</div></div>
+    <div class="result-metric"><div class="val" style="font-size:1rem">${escHtml(r.cfu?.scientific_notation || '—')}</div><div class="lbl">Notasi Saintifik</div></div>
+    <div class="result-metric"><div class="val">${(r.colony_density || 0).toFixed(2)}</div><div class="lbl">Kepadatan</div></div>
+    <div class="result-metric"><div class="val">${(r.processing_time_ms || 0).toFixed(0)}<span style="font-size:0.8rem">ms</span></div><div class="lbl">Waktu Proses</div></div>
+  `;
+
+  // Quadrant
+  const q = r.colonies_per_quadrant || {};
+  document.getElementById('quadrant-display').innerHTML = ['Q1','Q2','Q3','Q4'].map(k => `
+    <div class="quadrant-cell">
+      <div class="q-label">${k}</div>
+      <div class="q-val">${q[k] ?? 0}</div>
+    </div>
+  `).join('');
+
+  // QC
+  const qc = r.quality_control || {};
+  const scores = [
+    ['Fokus', qc.focus_score],
+    ['Kejelasan', qc.blur_score],
+    ['Silau', qc.glare_score],
+    ['Bayangan', qc.shadow_score],
+    ['Visibilitas', qc.visibility_score],
+  ];
+  document.getElementById('qc-display').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <span style="font-family:var(--font-mono);font-size:1.5rem;font-weight:500;color:var(--accent)">${(qc.score || 0).toFixed(1)}</span>
+      <div>${qcBadge(qc.grade)}</div>
+      ${qc.issues?.length ? `<span style="font-size:12px;color:var(--red)">${qc.issues.join(', ')}</span>` : ''}
+    </div>
+    ${scores.map(([label, val]) => `
+      <div class="qc-meter">
+        <span style="min-width:80px;color:var(--text2)">${label}</span>
+        <div class="qc-bar-wrap"><div class="qc-bar-fill" style="width:${Math.min((val||0)*100,100).toFixed(0)}%"></div></div>
+        <span class="qc-val">${((val||0)*100).toFixed(0)}%</span>
+      </div>
+    `).join('')}
+  `;
+
+  // Morphology
+  const m = r.morphology_summary || {};
+  document.getElementById('morph-display').innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <span class="badge badge-blue">Pinpoint: ${m.pinpoint_count || 0}</span>
+      <span class="badge badge-green">Kecil: ${m.small_count || 0}</span>
+      <span class="badge badge-amber">Sedang: ${m.medium_count || 0}</span>
+      <span class="badge badge-red">Besar: ${m.large_count || 0}</span>
+    </div>
+    <div style="font-size:13px;color:var(--text2)">
+      Ø rerata: <strong>${m.mean_diameter_mm ? m.mean_diameter_mm.toFixed(2) + ' mm' : '—'}</strong> &nbsp;|&nbsp;
+      Sirkularitas: <strong>${m.mean_circularity ? m.mean_circularity.toFixed(2) : '—'}</strong>
+      ${m.dominant_color ? ` &nbsp;|&nbsp; Warna dominan: <strong>${m.dominant_color}</strong>` : ''}
+    </div>
+  `;
+
+  // Report buttons
+  document.getElementById('report-buttons').innerHTML = ['pdf','csv','json'].map(fmt => `
+    <a href="${API}/api/reports/${analysisId}/download/${fmt}" class="btn btn-secondary btn-sm" id="dl-${fmt}-btn" onclick="generateReport('${analysisId}','${fmt}',event)">
+      ↓ ${fmt.toUpperCase()}
+    </a>
+  `).join('');
+}
+
+async function generateReport(analysisId, fmt, evt) {
+  evt.preventDefault();
+  try {
+    const r = await fetch(`${API}/api/reports/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ analysis_id: analysisId, formats: [fmt] }),
+    });
+    if (r.ok) {
+      window.open(`${API}/api/reports/${analysisId}/download/${fmt}`, '_blank');
+    } else {
+      throw new Error();
+    }
+  } catch {
+    toast(`Gagal mengunduh laporan ${fmt.toUpperCase()}`, 'error');
+  }
+}
+
+function resetAnalysisForm() {
+  document.getElementById('file-input').value = '';
+  document.getElementById('image-preview').style.display = 'none';
+  document.getElementById('upload-placeholder').style.display = 'block';
+  document.getElementById('f-sample-name').value = 'Sample';
+  document.getElementById('f-analyst').value = 'Analis';
+  document.getElementById('f-dilution').value = '1';
+  document.getElementById('f-volume').value = '1.0';
+  document.getElementById('f-organism-type').value = '';
+  document.getElementById('f-media-type').value = '';
+  document.getElementById('f-sample-id').value = '';
+  document.getElementById('f-incubation-date').value = '';
+  document.getElementById('f-observation-date').value = '';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('result-panel').classList.remove('show');
+  document.getElementById('result-placeholder').style.display = 'block';
+  document.getElementById('progress-area').style.display = 'none';
+  document.getElementById('progress-fill').style.width = '0%';
+}
+
+// ═══════════════════════════════════════════════════════════
+// SAMPLES CRUD
+// ═══════════════════════════════════════════════════════════
+async function loadSamples(page = 1) {
+  samplesPage = page;
+  try {
+    const r = await fetch(`${API}/api/samples?page=${page}&per_page=${PER_PAGE}`);
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    samplesData = d.items || [];
+    samplesFiltered = [...samplesData];
+    renderSamplesTable();
+    renderSamplesPagination(d.total, d.pages, d.page);
+    document.getElementById('sample-count-label').textContent = `${d.total} sampel`;
+    // Update analyze dropdown
+    loadSampleOptions(samplesData);
+  } catch {
+    document.getElementById('samples-tbody').innerHTML = `<tr><td colspan="6"><div class="empty-state">Gagal memuat data. Pastikan server berjalan.</div></td></tr>`;
+  }
+}
+
+async function loadSampleOptions(data) {
+  if (!data) {
+    try {
+      const r = await fetch(`${API}/api/samples?page=1&per_page=100`);
+      if (r.ok) { const d = await r.json(); data = d.items; }
+    } catch { data = []; }
+  }
+  const sel = document.getElementById('f-sample-id');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Tidak ditautkan —</option>';
+  (data || []).forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    const label = s.sample_name || s.name || s.id;
+    const sub = s.analyst ? ` — ${s.analyst}` : '';
+    opt.textContent = label + sub;
+    sel.appendChild(opt);
+  });
+  if (current) sel.value = current;
+}
+
+function renderSamplesTable() {
+  const tbody = document.getElementById('samples-tbody');
+  const filtered = getFilteredSamples();
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🧫</div><div class="empty-title">Belum ada sampel</div><div style="font-size:13px;margin-top:4px">Tambahkan sampel baru untuk memulai</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(s => `
+    <tr>
+      <td><strong>${escHtml(s.sample_name || s.name || '—')}</strong></td>
+      <td>${escHtml(s.analyst || '—')}</td>
+      <td>${s.media_type ? `<span class="badge badge-blue">${escHtml(s.media_type)}</span>` : '—'}</td>
+      <td>${s.organism_type ? `<span class="badge badge-green">${escHtml(s.organism_type)}</span>` : '—'}</td>
+      <td style="font-size:13px;color:var(--text3)">${formatTime(s.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="editSample(${JSON.stringify(s).replace(/"/g,'&quot;')})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSampleConfirm('${s.id}','${escHtml(s.sample_name||s.name||'')}')">Hapus</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function getFilteredSamples() {
+  const q = (document.getElementById('sample-search')?.value || '').toLowerCase();
+  return samplesData.filter(s => !q || (s.sample_name||s.name||'').toLowerCase().includes(q) || (s.analyst||'').toLowerCase().includes(q));
+}
+
+function filterSamples() { renderSamplesTable(); }
+
+function renderSamplesPagination(total, pages, current) {
+  const el = document.getElementById('samples-pagination');
+  if (pages <= 1) { el.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="loadSamples(${current-1})" ${current<=1?'disabled':''}>←</button>`;
+  for (let i = 1; i <= pages; i++) {
+    html += `<button class="page-btn ${i===current?'active':''}" onclick="loadSamples(${i})">${i}</button>`;
+  }
+  html += `<button class="page-btn" onclick="loadSamples(${current+1})" ${current>=pages?'disabled':''}>→</button>`;
+  el.innerHTML = html;
+}
+
+function openSampleModal(data) {
+  document.getElementById('sample-modal-title').textContent = data ? 'Edit Sampel' : 'Tambah Sampel';
+  document.getElementById('sm-id').value = data?.id || '';
+  document.getElementById('sm-name').value = data?.sample_name || data?.name || '';
+  document.getElementById('sm-analyst').value = data?.analyst || '';
+  document.getElementById('sm-media-type').value = data?.media_type || '';
+  document.getElementById('sm-organism-type').value = data?.organism_type || '';
+  document.getElementById('sm-incubation-date').value = data?.incubation_date || '';
+  document.getElementById('sm-observation-date').value = data?.observation_date || '';
+  document.getElementById('sm-notes').value = data?.notes || '';
+  openModal('sample-modal');
+}
+
+function editSample(s) { openSampleModal(s); }
+
+async function saveSample() {
+  const id = document.getElementById('sm-id').value;
+  const name = document.getElementById('sm-name').value.trim();
+  if (!name) { toast('Nama sampel wajib diisi', 'error'); return; }
+  // analyst validation happens below
+
+  const analyst = document.getElementById('sm-analyst').value.trim();
+  if (!analyst) { toast('Nama analis wajib diisi', 'error'); return; }
+
+  const payload = {
+    sample_name: name,
+    analyst,
+    media_type: document.getElementById('sm-media-type').value || null,
+    organism_type: document.getElementById('sm-organism-type').value || null,
+    incubation_date: document.getElementById('sm-incubation-date').value || null,
+    observation_date: document.getElementById('sm-observation-date').value || null,
+    notes: document.getElementById('sm-notes').value.trim() || null,
+  };
+
+  try {
+    let r;
+    if (id) {
+      r = await fetch(`${API}/api/samples/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } else {
+      r = await fetch(`${API}/api/samples`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    }
+    if (!r.ok) {
+      const err = await r.json();
+      throw new Error(err.detail || 'Gagal menyimpan');
+    }
+    closeModal('sample-modal');
+    toast(id ? 'Sampel diperbarui' : 'Sampel berhasil ditambahkan', 'success');
+    loadSamples(samplesPage);
+  } catch (e) {
+    toast('Error: ' + e.message, 'error');
+  }
+}
+
+function deleteSampleConfirm(id, name) {
+  confirm('Hapus Sampel', `Apakah Anda yakin ingin menghapus sampel "${name}"? Tindakan ini tidak dapat dibatalkan.`, () => deleteSample(id));
+}
+
+async function deleteSample(id) {
+  try {
+    const r = await fetch(`${API}/api/samples/${id}`, { method: 'DELETE' });
+    if (r.status !== 204 && !r.ok) {
+      let msg = `HTTP ${r.status}`;
+      try { const err = await r.json(); msg = err.detail || msg; } catch {}
+      throw new Error(msg);
+    }
+    toast('Sampel berhasil dihapus', 'success');
+    loadSamples(samplesPage);
+  } catch(e) {
+    toast('Gagal menghapus sampel: ' + e.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════
+async function loadHistory(page = 1) {
+  historyPage = page;
+  const tbody = document.getElementById('history-tbody');
+  tbody.innerHTML = `<tr><td colspan="7"><div class="loading-state"><div class="spinner"></div></div></td></tr>`;
+  try {
+    const r = await fetch(`${API}/api/analyses?page=${page}&per_page=20`);
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    historyData = d.items || [];
+    renderHistoryTable();
+    renderHistoryPagination(d.total, d.pages, d.page);
+  } catch {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">Gagal memuat riwayat</div></td></tr>`;
+  }
+}
+
+function renderHistoryTable() {
+  const search = (document.getElementById('history-search')?.value || '').toLowerCase();
+  const qcFilter = document.getElementById('history-filter-qc')?.value || '';
+  const filtered = historyData.filter(a =>
+    (!search || (a.sample_name||a.original_filename||'').toLowerCase().includes(search) || (a.analyst||'').toLowerCase().includes(search)) &&
+    (!qcFilter || a.qc_grade === qcFilter)
+  );
+  const tbody = document.getElementById('history-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Belum ada riwayat analisis</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(a => `
+    <tr>
+      <td><strong>${escHtml(a.sample_name || a.original_filename || '—')}</strong></td>
+      <td class="mono" style="font-size:12px;color:var(--text3)">${escHtml(a.original_filename || '—')}</td>
+      <td><strong>${a.total_colonies ?? '—'}</strong></td>
+      <td class="mono" style="font-size:13px">${escHtml(a.cfu_per_ml_formatted || '—')}</td>
+      <td>${qcBadge(a.qc_grade)}</td>
+      <td style="font-size:13px;color:var(--text3)">${formatTime(a.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="viewAnalysis('${a.id}')">Detail</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAnalysisConfirm('${a.id}')">Hapus</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterHistory() { renderHistoryTable(); }
+document.getElementById('history-search')?.addEventListener('input', filterHistory);
+
+function renderHistoryPagination(total, pages, current) {
+  const el = document.getElementById('history-pagination');
+  if (pages <= 1) { el.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="loadHistory(${current-1})" ${current<=1?'disabled':''}>←</button>`;
+  for (let i = Math.max(1,current-2); i <= Math.min(pages,current+2); i++) {
+    html += `<button class="page-btn ${i===current?'active':''}" onclick="loadHistory(${i})">${i}</button>`;
+  }
+  html += `<button class="page-btn" onclick="loadHistory(${current+1})" ${current>=pages?'disabled':''}>→</button>`;
+  el.innerHTML = html;
+}
+
+async function viewAnalysis(id) {
+  openModal('detail-modal');
+  document.getElementById('detail-modal-body').innerHTML = `<div class="loading-state"><div class="spinner"></div> Memuat...</div>`;
+  try {
+    const r = await fetch(`${API}/api/analyses/${id}`);
+    if (!r.ok) throw new Error('Analisis tidak ditemukan');
+    const resp = await r.json();
+    // Backend returns { analysis: {...}, morphology_summary: {}, qc_issues: [], colonies: [] }
+    const a = resp.analysis || resp; // fallback jika flat
+    const m = resp.morphology_summary || a.morphology_summary || {};
+    const qcIssues = resp.qc_issues || [];
+    const q = {
+      Q1: a.colonies_q1 ?? 0,
+      Q2: a.colonies_q2 ?? 0,
+      Q3: a.colonies_q3 ?? 0,
+      Q4: a.colonies_q4 ?? 0,
+    };
+    const qcScores = [
+      ['Fokus', a.qc_focus_score],
+      ['Kejelasan', a.qc_blur_score],
+      ['Silau', a.qc_glare_score],
+      ['Bayangan', a.qc_shadow_score],
+      ['Visibilitas', a.qc_visibility_score],
+    ];
+    document.getElementById('detail-modal-body').innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem">
+        ${qcBadge(a.qc_grade)}
+        <span class="badge badge-gray mono" style="font-size:11px">${escHtml(a.model_version||'—')}</span>
+        <span class="badge badge-gray" style="font-size:11px">${formatTime(a.created_at)}</span>
+      </div>
+      ${a.sample_name ? `<div style="font-size:14px;font-weight:500;margin-bottom:12px">Sampel: ${escHtml(a.sample_name)}</div>` : ''}
+      <img src="${API}/api/images/${id}/annotated" style="max-width:100%;border-radius:var(--radius);border:1px solid var(--border);margin-bottom:1rem" onerror="this.style.display='none'">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem">
+        <div class="card-sm"><div style="font-size:12px;color:var(--text3)">Total Koloni</div><div style="font-size:1.5rem;font-family:var(--font-mono);font-weight:500;color:var(--accent)">${a.total_colonies??'—'}</div></div>
+        <div class="card-sm"><div style="font-size:12px;color:var(--text3)">CFU/mL</div><div style="font-size:1rem;font-family:var(--font-mono);font-weight:500">${escHtml(a.cfu_per_ml_formatted||'—')}</div></div>
+        <div class="card-sm"><div style="font-size:12px;color:var(--text3)">Faktor Pengenceran</div><div style="font-family:var(--font-mono)">${a.dilution_factor??'—'}</div></div>
+        <div class="card-sm"><div style="font-size:12px;color:var(--text3)">Volume (mL)</div><div style="font-family:var(--font-mono)">${a.inoculation_volume_ml??'—'}</div></div>
+      </div>
+      <div style="font-weight:500;font-size:14px;margin-bottom:8px">QC Score: ${(a.qc_score||0).toFixed(1)}</div>
+      ${qcScores.map(([label,val])=>`
+        <div class="qc-meter">
+          <span style="min-width:80px;color:var(--text2)">${label}</span>
+          <div class="qc-bar-wrap"><div class="qc-bar-fill" style="width:${Math.min((val||0)*100,100).toFixed(0)}%"></div></div>
+          <span class="qc-val">${((val||0)*100).toFixed(0)}%</span>
+        </div>
+      `).join('')}
+      ${qcIssues.length ? `<div style="font-size:12px;color:var(--red);margin:8px 0">⚠ ${qcIssues.join(', ')}</div>` : ''}
+      <div style="font-weight:500;font-size:14px;margin:12px 0 8px">Distribusi Kuadran</div>
+      <div class="quadrant-grid" style="margin-bottom:1rem">
+        ${['Q1','Q2','Q3','Q4'].map(k=>`<div class="quadrant-cell"><div class="q-label">${k}</div><div class="q-val">${q[k]??0}</div></div>`).join('')}
+      </div>
+      <div style="font-weight:500;font-size:14px;margin-bottom:8px">Morfologi</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem">
+        <span class="badge badge-blue">Pinpoint: ${m.pinpoint_count||0}</span>
+        <span class="badge badge-green">Kecil: ${m.small_count||0}</span>
+        <span class="badge badge-amber">Sedang: ${m.medium_count||0}</span>
+        <span class="badge badge-red">Besar: ${m.large_count||0}</span>
+        ${m.mean_diameter_mm ? `<span class="badge badge-gray">Ø ${m.mean_diameter_mm.toFixed(2)} mm</span>` : ''}
+      </div>
+      <div style="font-weight:500;font-size:14px;margin-bottom:8px">Unduh Laporan</div>
+      <div class="report-buttons">
+        ${['pdf','csv','json'].map(fmt=>`<a href="${API}/api/reports/${id}/download/${fmt}" class="btn btn-secondary btn-sm" onclick="generateReport('${id}','${fmt}',event)">↓ ${fmt.toUpperCase()}</a>`).join('')}
+      </div>
+    `;
+  } catch (e) {
+    document.getElementById('detail-modal-body').innerHTML = `<div class="empty-state">${e.message}</div>`;
+  }
+}
+
+function deleteAnalysisConfirm(id) {
+  confirm('Hapus Analisis', 'Hapus analisis ini? Data tidak dapat dipulihkan.', () => deleteAnalysis(id));
+}
+
+async function deleteAnalysis(id) {
+  try {
+    const r = await fetch(`${API}/api/analyses/${id}`, { method: 'DELETE' });
+    if (r.status !== 204 && !r.ok) {
+      let msg = `HTTP ${r.status}`;
+      try { const err = await r.json(); msg = err.detail || msg; } catch {}
+      throw new Error(msg);
+    }
+    toast('Analisis berhasil dihapus', 'success');
+    loadHistory(historyPage);
+  } catch(e) {
+    toast('Gagal menghapus analisis: ' + e.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function qcBadge(grade) {
+  const map = { A: 'badge-green', B: 'badge-blue', C: 'badge-amber', D: 'badge-red' };
+  const cls = map[grade] || 'badge-gray';
+  const labels = { A: 'Excellent', B: 'Good', C: 'Acceptable', D: 'Poor' };
+  return `<span class="badge ${cls}">${escHtml(grade || '—')} ${labels[grade] ? '· '+labels[grade] : ''}</span>`;
+}
+
+function formatTime(iso) {
+  if (!iso) return '—';
+  try {
+    return new Date(iso).toLocaleString('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  } catch { return iso; }
+}
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => {
+    if (e.target === el) el.classList.remove('open');
+  });
+});
+
+// Initial load
+loadDashboard();
+
+// ═══════════════════════════════════════════════════════════
+// DEVELOPMENT PAGE
+// ═══════════════════════════════════════════════════════════
+
+// Konfigurasi slot foto per kelompok kontrol
+const DEV_CTRL_CONFIG = {
+  positive_product: { count: 3, label: 'Kontrol Positif Produk' },
+  negative_product: { count: 2, label: 'Kontrol Negatif Produk' },
+  negative_media:   { count: 2, label: 'Kontrol Negatif Media'  },
+  positive_media:   { count: 2, label: 'Kontrol Positif Media'  },
+};
+
+// State: simpan file yang dipilih per slot
+const devFiles = {
+  positive_product: [null, null, null],
+  negative_product: [null, null],
+  negative_media:   [null, null],
+  positive_media:   [null, null],
+};
+
+// Inisialisasi slot upload saat halaman pertama dimuat
+function initDevSlots() {
+  for (const [key, cfg] of Object.entries(DEV_CTRL_CONFIG)) {
+    const container = document.getElementById(`slots-${key}`);
+    if (!container) continue;
+    container.innerHTML = '';
+    for (let i = 0; i < cfg.count; i++) {
+      const slotId = `slot-${key}-${i}`;
+      const slot = document.createElement('div');
+      slot.className = 'file-slot';
+      slot.id = slotId;
+      slot.innerHTML = `
+        <span class="slot-icon">📷</span>
+        <span class="slot-name">Foto ${i + 1}</span>
+        <input type="file" accept="image/jpeg,image/png,image/webp"
+               onchange="onDevFileChange('${key}',${i},this)">
+      `;
+      container.appendChild(slot);
+    }
+  }
+}
+
+function onDevFileChange(key, idx, input) {
+  const file = input.files[0];
+  if (!file) return;
+  devFiles[key][idx] = file;
+  const slot = document.getElementById(`slot-${key}-${idx}`);
+  slot.classList.add('filled');
+  const name = file.name.length > 22 ? file.name.substring(0, 20) + '…' : file.name;
+  slot.querySelector('.slot-name').textContent = name;
+  // Tambah tombol clear
+  if (!slot.querySelector('.slot-clear')) {
+    const clr = document.createElement('span');
+    clr.className = 'slot-clear';
+    clr.textContent = '✕';
+    clr.onclick = (e) => {
+      e.stopPropagation();
+      clearDevSlot(key, idx);
+    };
+    slot.appendChild(clr);
+  }
+}
+
+function clearDevSlot(key, idx) {
+  devFiles[key][idx] = null;
+  const slot = document.getElementById(`slot-${key}-${idx}`);
+  slot.classList.remove('filled');
+  slot.querySelector('.slot-name').textContent = `Foto ${idx + 1}`;
+  const clr = slot.querySelector('.slot-clear');
+  if (clr) clr.remove();
+  // Reset input
+  const input = slot.querySelector('input[type=file]');
+  if (input) input.value = '';
+}
+
+function resetDevForm() {
+  document.getElementById('dev-sample-name').value = '';
+  document.getElementById('dev-analyst').value = '';
+  document.getElementById('dev-organism-type').value = '';
+  document.getElementById('dev-media-type').value = '';
+  document.getElementById('dev-dilution').value = '1';
+  document.getElementById('dev-volume').value = '1.0';
+  document.getElementById('dev-incubation-date').value = '';
+  document.getElementById('dev-observation-date').value = '';
+  document.getElementById('dev-notes').value = '';
+  // Reset semua slot
+  for (const key of Object.keys(devFiles)) {
+    devFiles[key] = devFiles[key].map(() => null);
+  }
+  initDevSlots();
+  document.getElementById('dev-result-placeholder').style.display = 'block';
+  document.getElementById('dev-result-panel').style.display = 'none';
+  document.getElementById('dev-progress').style.display = 'none';
+}
+
+function switchDevTab(tab) {
+  // Riwayat sesi dipindah ke navbar — halaman ini hanya tampilkan form sesi baru
+  const newContent = document.getElementById('dev-tab-content-new');
+  if (newContent) newContent.style.display = 'block';
+}
+
+async function submitDevSession() {
+  // Validasi form
+  const sampleName = document.getElementById('dev-sample-name').value.trim();
+  const analyst = document.getElementById('dev-analyst').value.trim();
+  if (!sampleName) { toast('Nama sampel wajib diisi', 'error'); return; }
+  if (!analyst)     { toast('Nama analis wajib diisi', 'error'); return; }
+
+  // Validasi semua foto sudah dipilih
+  const missing = [];
+  for (const [key, cfg] of Object.entries(DEV_CTRL_CONFIG)) {
+    devFiles[key].forEach((f, i) => {
+      if (!f) missing.push(`${cfg.label} Foto ${i + 1}`);
+    });
+  }
+  if (missing.length) {
+    toast(`Foto belum lengkap: ${missing.slice(0, 3).join(', ')}${missing.length > 3 ? ` +${missing.length - 3} lainnya` : ''}`, 'error');
+    return;
+  }
+
+  const btn = document.getElementById('dev-submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Memproses...';
+
+  // Tampilkan progress
+  const progress = document.getElementById('dev-progress');
+  const progressFill = document.getElementById('dev-progress-fill');
+  const progressLabel = document.getElementById('dev-progress-label');
+  const progressDetail = document.getElementById('dev-progress-detail');
+  progress.style.display = 'block';
+  progressFill.style.width = '5%';
+  progressLabel.textContent = 'Mengunggah foto & menginisialisasi...';
+  progressDetail.textContent = 'Total: 9 foto akan diproses oleh YOLO';
+
+  // Buat FormData
+  const fd = new FormData();
+  fd.append('sample_name', sampleName);
+  fd.append('analyst', analyst);
+  fd.append('dilution_factor', document.getElementById('dev-dilution').value);
+  fd.append('inoculation_volume_ml', document.getElementById('dev-volume').value);
+
+  const orgType = document.getElementById('dev-organism-type').value;
+  const mediaType = document.getElementById('dev-media-type').value;
+  const incDate = document.getElementById('dev-incubation-date').value;
+  const obsDate = document.getElementById('dev-observation-date').value;
+  const notes = document.getElementById('dev-notes').value.trim();
+
+  if (orgType) fd.append('organism_type', orgType);
+  if (mediaType) fd.append('media_type', mediaType);
+  if (incDate) fd.append('incubation_date', incDate);
+  if (obsDate) fd.append('observation_date', obsDate);
+  if (notes) fd.append('notes', notes);
+
+  // Append foto dengan nama field yang sesuai backend
+  const fieldMap = {
+    positive_product: ['positive_product_1', 'positive_product_2', 'positive_product_3'],
+    negative_product: ['negative_product_1', 'negative_product_2'],
+    negative_media:   ['negative_media_1',   'negative_media_2'],
+    positive_media:   ['positive_media_1',   'positive_media_2'],
+  };
+  for (const [key, fields] of Object.entries(fieldMap)) {
+    devFiles[key].forEach((file, i) => {
+      if (file) fd.append(fields[i], file, file.name);
+    });
+  }
+
+  // Simulasi progress bertahap
+  const steps = [
+    [15, 'Mengunggah gambar ke server...'],
+    [30, 'Memproses Kontrol Positif Produk (3 foto)...'],
+    [50, 'Memproses Kontrol Negatif Produk (2 foto)...'],
+    [65, 'Memproses Kontrol Negatif Media (2 foto)...'],
+    [80, 'Memproses Kontrol Positif Media (2 foto)...'],
+    [92, 'Menghitung Mean, RSD, % Recovery...'],
+  ];
+  let stepIdx = 0;
+  const progInterval = setInterval(() => {
+    if (stepIdx < steps.length) {
+      progressFill.style.width = steps[stepIdx][0] + '%';
+      progressLabel.textContent = steps[stepIdx][1];
+      stepIdx++;
+    }
+  }, 2500);
+
+  try {
+    const r = await fetch(`${API}/api/development/sessions`, {
+      method: 'POST',
+      body: fd,
+    });
+
+    clearInterval(progInterval);
+    progressFill.style.width = '100%';
+    progressLabel.textContent = 'Selesai!';
+
+    if (!r.ok) {
+      let msg = `HTTP ${r.status}`;
+      try { const err = await r.json(); msg = err.detail || msg; } catch {}
+      throw new Error(msg);
+    }
+
+    const data = await r.json();
+    renderDevResult(data);
+    toast(`Analisis bulk selesai — % Recovery: ${data.statistics.percent_recovery ? data.statistics.percent_recovery.toFixed(1) + '%' : 'N/A'}`, 'success');
+
+    setTimeout(() => { progress.style.display = 'none'; }, 2000);
+
+  } catch (e) {
+    clearInterval(progInterval);
+    progress.style.display = 'none';
+    toast('Analisis gagal: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🧪 Mulai Analisis Bulk';
+  }
+}
+
+function renderDevResult(data) {
+  document.getElementById('dev-result-placeholder').style.display = 'none';
+  const panel = document.getElementById('dev-result-panel');
+  panel.style.display = 'block';
+
+  const st = data.statistics;
+  const interp = data.interpretation;
+
+  // Recovery banner
+  let bannerClass = 'recovery-warn';
+  if (interp.passed) bannerClass = 'recovery-pass';
+  else if (st.percent_recovery !== null && st.percent_recovery < 50) bannerClass = 'recovery-fail';
+
+  const recoveryText = st.percent_recovery !== null
+    ? `% Recovery: ${st.percent_recovery.toFixed(1)}%`
+    : '% Recovery: Tidak dapat dihitung';
+
+  const ctrlGroups = [
+    { key: 'positive_product', label: 'Kontrol Positif Produk', badgeCls: 'badge-green',  icon: '🟢' },
+    { key: 'negative_product', label: 'Kontrol Negatif Produk', badgeCls: 'badge-red',    icon: '🔴' },
+    { key: 'negative_media',   label: 'Kontrol Negatif Media',  badgeCls: 'badge-amber',  icon: '🟡' },
+    { key: 'positive_media',   label: 'Kontrol Positif Media',  badgeCls: 'badge-blue',   icon: '🔵' },
+  ];
+
+  const statsCards = ctrlGroups.map(g => {
+    const s = st[g.key] || {};
+    const mean = s.mean != null ? s.mean.toExponential(2) : '—';
+    const rsd  = s.rsd  != null ? s.rsd.toFixed(1) + ' %' : '—';
+    const n    = s.n    != null ? s.n : 0;
+    const vals = (s.values || []).map(v => v.toExponential(2)).join(', ') || '—';
+    return `
+      <div class="dev-result-card">
+        <div class="dev-result-header">
+          ${g.icon} ${g.label} <span class="badge ${g.badgeCls}" style="margin-left:6px;font-size:10px">n=${n}</span>
+        </div>
+        <div class="dev-result-body">
+          <div class="stat-row"><span class="stat-key">Mean CFU/mL</span><span class="stat-val">${mean}</span></div>
+          <div class="stat-row"><span class="stat-key">RSD (%)</span><span class="stat-val">${rsd}</span></div>
+          <div class="stat-row"><span class="stat-key">Nilai individu</span><span class="stat-val" style="font-size:12px">${vals}</span></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Issues
+  const issueHtml = interp.issues.map(i => `
+    <div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;
+                color:${i.startsWith('✓') ? 'var(--accent)' : i.startsWith('✕') ? 'var(--red)' : 'var(--amber)'}">
+      ${escHtml(i)}
+    </div>
+  `).join('');
+
+  // Tabel analisis individu
+  const allIds = data.all_analysis_ids || [];
+  const analysisRows = allIds.map(id => {
+    // Cari kelompok kontrol untuk id ini
+    let ctrlLabel = '—';
+    for (const [key, ids] of Object.entries(data.analysis_ids || {})) {
+      if (ids.includes(id)) {
+        const idx = ids.indexOf(id) + 1;
+        ctrlLabel = `${ctrlGroups.find(g => g.key === key)?.label || key} #${idx}`;
+        break;
+      }
+    }
+    return `
+      <tr>
+        <td style="font-size:12px;color:var(--text3)">${escHtml(ctrlLabel)}</td>
+        <td><button class="btn btn-secondary btn-sm" onclick="viewAnalysis('${id}')">Detail</button></td>
+      </tr>
+    `;
+  }).join('');
+
+  panel.innerHTML = `
+    <!-- Recovery Banner -->
+    <div class="recovery-banner ${bannerClass}" style="margin-bottom:1rem">
+      ${recoveryText}
+      <div style="font-size:14px;font-weight:500;margin-top:4px">${escHtml(interp.summary)}</div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+      ${statsCards}
+    </div>
+
+    <!-- Interpretasi -->
+    <div class="card" style="margin-bottom:1rem;padding:1rem">
+      <div style="font-weight:600;font-size:14px;margin-bottom:8px">Interpretasi Validasi</div>
+      ${issueHtml || '<div style="font-size:13px;color:var(--text3)">Tidak ada catatan.</div>'}
+    </div>
+
+    <!-- Tabel Analisis Individu -->
+    <div class="card" style="padding:1rem">
+      <div style="font-weight:600;font-size:14px;margin-bottom:8px">Analisis Individual</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Kelompok Kontrol</th><th>Aksi</th></tr>
+          </thead>
+          <tbody>${analysisRows}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Unduh Laporan -->
+    <div class="card" style="padding:1rem;margin-top:1rem">
+      <div style="font-weight:600;font-size:14px;margin-bottom:10px">📄 Unduh Laporan Sesi</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:12px">
+        Generate 1 laporan PDF ringkasan keseluruhan sesi (Mean, RSD, % Recovery). CSV dan JSON juga tersedia.
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="dev-report-btns-${data.sample_id || 'sess'}">
+        <button class="btn btn-primary" onclick="generateDevReport('${data.sample_id}','pdf',this)">⬇ PDF Ringkasan</button>
+        <button class="btn btn-secondary" onclick="generateDevReport('${data.sample_id}','csv',this)">⬇ CSV</button>
+        <button class="btn btn-secondary" onclick="generateDevReport('${data.sample_id}','json',this)">⬇ JSON</button>
+      </div>
+      <div id="dev-report-links-${data.sample_id || 'sess'}" style="margin-top:10px"></div>
+    </div>
+  `;
+}
+
+// ─── RIWAYAT SESI PENGEMBANGAN ───────────────────────────────────────────────
+let devSessionsPage = 1;
+
+async function loadDevSessions(page = 1) {
+  devSessionsPage = page;
+  const tbody = document.getElementById('dev-sessions-tbody');
+  tbody.innerHTML = `<tr><td colspan="6"><div class="loading-state"><div class="spinner"></div></div></td></tr>`;
+  try {
+    const r = await fetch(`${API}/api/development/sessions?page=${page}&per_page=10`);
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    if (!d.items.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🧪</div><div class="empty-title">Belum ada sesi pengembangan</div></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = d.items.map(s => `
+      <tr>
+        <td><strong>${escHtml(s.sample_name || '—')}</strong></td>
+        <td>${escHtml(s.analyst || '—')}</td>
+        <td>${s.media_type ? `<span class="badge badge-blue">${escHtml(s.media_type)}</span>` : '—'}</td>
+        <td><span class="badge badge-gray">${s.n_analyses} analisis</span></td>
+        <td style="font-size:13px;color:var(--text3)">${formatTime(s.created_at)}</td>
+        <td>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-secondary btn-sm" onclick="viewDevSession('${s.id}')">Lihat Hasil</button>
+            <button class="btn btn-secondary btn-sm" onclick="editDevSession('${s.id}','${escHtml(s.sample_name||'')}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteDevSessionConfirm('${s.id}','${escHtml(s.sample_name||'')}')">Hapus</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+    // Pagination
+    const pgEl = document.getElementById('dev-sessions-pagination');
+    if (d.pages <= 1) { pgEl.innerHTML = ''; return; }
+    let pgHtml = `<button class="page-btn" onclick="loadDevSessions(${page-1})" ${page<=1?'disabled':''}>←</button>`;
+    for (let i = 1; i <= d.pages; i++) {
+      pgHtml += `<button class="page-btn ${i===page?'active':''}" onclick="loadDevSessions(${i})">${i}</button>`;
+    }
+    pgHtml += `<button class="page-btn" onclick="loadDevSessions(${page+1})" ${page>=d.pages?'disabled':''}>→</button>`;
+    pgEl.innerHTML = pgHtml;
+  } catch {
+    document.getElementById('dev-sessions-tbody').innerHTML = `<tr><td colspan="6"><div class="empty-state">Gagal memuat data.</div></td></tr>`;
+  }
+}
+
+async function viewDevSession(sampleId) {
+  // Ambil hasil dari backend, lalu render
+  openModal('detail-modal');
+  document.getElementById('detail-modal-body').innerHTML = `<div class="loading-state"><div class="spinner"></div> Memuat...</div>`;
+  try {
+    const r = await fetch(`${API}/api/development/sessions/${sampleId}/result`);
+    if (!r.ok) throw new Error('Sesi tidak ditemukan');
+    const data = await r.json();
+    const st = data.statistics;
+    const interp = data.interpretation;
+
+    const ctrlGroups = [
+      { key: 'positive_product', label: 'KP Produk',  badgeCls: 'badge-green'  },
+      { key: 'negative_product', label: 'KN Produk',  badgeCls: 'badge-red'    },
+      { key: 'negative_media',   label: 'KN Media',   badgeCls: 'badge-amber'  },
+      { key: 'positive_media',   label: 'KP Media',   badgeCls: 'badge-blue'   },
+    ];
+
+    const statsHtml = ctrlGroups.map(g => {
+      const s = st[g.key] || {};
+      const mean = s.mean != null ? s.mean.toExponential(2) : '—';
+      const rsd  = s.rsd  != null ? s.rsd.toFixed(1) + ' %' : '—';
+      return `
+        <div class="card-sm">
+          <div style="font-size:12px;margin-bottom:6px"><span class="badge ${g.badgeCls}">${g.label}</span></div>
+          <div class="stat-row"><span class="stat-key" style="font-size:13px">Mean</span><span class="stat-val" style="font-size:13px">${mean}</span></div>
+          <div class="stat-row"><span class="stat-key" style="font-size:13px">RSD</span><span class="stat-val" style="font-size:13px">${rsd}</span></div>
+        </div>
+      `;
+    }).join('');
+
+    const recovClass = interp.passed ? 'recovery-pass' : 'recovery-fail';
+    const recovText = st.percent_recovery != null ? `% Recovery: ${st.percent_recovery.toFixed(1)}%` : '% Recovery: N/A';
+
+    const issueHtml = interp.issues.map(i => `
+      <div style="font-size:13px;padding:4px 0;color:${i.startsWith('✓') ? 'var(--accent)' : i.startsWith('✕') ? 'var(--red)' : 'var(--amber)'}">
+        ${escHtml(i)}
+      </div>
+    `).join('');
+
+    const analysisRows = (data.analyses || []).map(a => `
+      <tr>
+        <td style="font-size:12px">${escHtml(a.notes||'—')}</td>
+        <td><strong>${a.total_colonies ?? '—'}</strong></td>
+        <td class="mono" style="font-size:12px">${escHtml(a.cfu_per_ml_formatted||'—')}</td>
+        <td>${qcBadge(a.qc_grade)}</td>
+        <td><button class="btn btn-secondary btn-sm" onclick="viewAnalysis('${a.id}')">Detail</button></td>
+      </tr>
+    `).join('');
+
+    document.getElementById('detail-modal-body').innerHTML = `
+      <div style="font-weight:600;margin-bottom:4px">${escHtml(data.sample_name)}</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:1rem">${escHtml(data.analyst)} · ${formatTime(data.created_at)}</div>
+
+      <div class="recovery-banner ${recovClass}" style="margin-bottom:1rem;font-size:1rem">
+        ${recovText} — ${escHtml(interp.summary)}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem">
+        ${statsHtml}
+      </div>
+
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px">Interpretasi</div>
+      <div style="margin-bottom:1rem">${issueHtml}</div>
+
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px">Analisis Individual</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Keterangan</th><th>Koloni</th><th>CFU/mL</th><th>QC</th><th>Aksi</th></tr></thead>
+          <tbody>${analysisRows}</tbody>
+        </table>
+      </div>
+    `;
+  } catch (e) {
+    document.getElementById('detail-modal-body').innerHTML = `<div class="empty-state">${escHtml(e.message)}</div>`;
+  }
+}
+
+async function editDevSession(sampleId, sampleName) {
+  // Edit sampel dari sesi pengembangan (nama, analis, dsb) via modal sampel yang sudah ada
+  try {
+    const r = await fetch(`${API}/api/samples/${sampleId}`);
+    if (!r.ok) throw new Error();
+    const s = await r.json();
+    openSampleModal(s);
+    document.getElementById('sample-modal-title').textContent = 'Edit Sesi Pengembangan';
+  } catch {
+    toast('Gagal memuat data sesi', 'error');
+  }
+}
+
+function deleteDevSessionConfirm(id, name) {
+  confirm(
+    'Hapus Sesi Pengembangan',
+    `Hapus sesi "${name}" beserta semua ${Object.values(DEV_CTRL_CONFIG).reduce((a,c)=>a+c.count,0)} analisis terkait? Tindakan ini tidak dapat dibatalkan.`,
+    () => deleteDevSession(id)
+  );
+}
+
+async function deleteDevSession(id) {
+  try {
+    const r = await fetch(`${API}/api/development/sessions/${id}`, { method: 'DELETE' });
+    if (r.status !== 204 && !r.ok) {
+      let msg = `HTTP ${r.status}`;
+      try { const err = await r.json(); msg = err.detail || msg; } catch {}
+      throw new Error(msg);
+    }
+    toast('Sesi pengembangan berhasil dihapus', 'success');
+    loadDevSessions(devSessionsPage);
+    // Refresh halaman sampel juga
+    if (samplesData.length) loadSamples(samplesPage);
+  } catch(e) {
+    toast('Gagal menghapus sesi: ' + e.message, 'error');
+  }
+}
+
+// Inisialisasi slot saat pertama kali script diload
+// goPage sudah menangani 'development' di bawah — tidak perlu override
+document.addEventListener('DOMContentLoaded', () => { initDevSlots(); });
+if (document.readyState !== 'loading') initDevSlots();
+
+
+
+// ═══════════════════════════════════════════════════════════
+// DEV MODE SELECTOR (Kuantitatif / Kualitatif)
+// ═══════════════════════════════════════════════════════════
+let currentDevMode = 'kuanti';
+
+function selectDevMode(mode) {
+  currentDevMode = mode;
+  // Update mode card styles
+  document.getElementById('mode-kuanti').classList.toggle('selected', mode === 'kuanti');
+  document.getElementById('mode-kuali').classList.toggle('selected', mode === 'kuali');
+  // Show/hide content areas (tabs only for kuanti, kuali has its own content)
+  const tabsRow    = document.getElementById('dev-tabs-row');
+  const kuantiNew  = document.getElementById('dev-tab-content-new');
+  const kuantiHist = document.getElementById('dev-tab-content-history');
+  const kualiBlock = document.getElementById('dev-kuali-content');
+
+  if (mode === 'kuanti') {
+    if (tabsRow)    tabsRow.style.display    = 'flex';
+    if (kuantiNew)  kuantiNew.style.display  = 'block';
+    if (kuantiHist) kuantiHist.style.display = 'none';
+    if (kualiBlock) kualiBlock.style.display = 'none';
+    initDevSlots();
+  } else {
+    if (tabsRow)    tabsRow.style.display    = 'none';
+    if (kuantiNew)  kuantiNew.style.display  = 'none';
+    if (kuantiHist) kuantiHist.style.display = 'none';
+    if (kualiBlock) kualiBlock.style.display = 'block';
+    initKualiSlots();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// KUALITATIF - Slot Management
+// ═══════════════════════════════════════════════════════════
+const KUALI_CTRL_CONFIG = {
+  positive_product: { count: 3, label: 'Kontrol Positif Produk' },
+  negative_product: { count: 2, label: 'Kontrol Negatif Produk' },
+  negative_media:   { count: 2, label: 'Kontrol Negatif Media'  },
+  positive_media:   { count: 2, label: 'Kontrol Positif Media'  },
+};
+
+const kualiFiles = {
+  positive_product: [null, null, null],
+  negative_product: [null, null],
+  negative_media:   [null, null],
+  positive_media:   [null, null],
+};
+
+function initKualiSlots() {
+  for (const [key, cfg] of Object.entries(KUALI_CTRL_CONFIG)) {
+    const container = document.getElementById(`kuali-slots-${key}`);
+    if (!container) continue;
+    container.innerHTML = '';
+    for (let i = 0; i < cfg.count; i++) {
+      const slotId = `kuali-slot-${key}-${i}`;
+      const slot = document.createElement('div');
+      slot.className = 'file-slot';
+      slot.id = slotId;
+      slot.innerHTML = `
+        <span class="slot-icon">📷</span>
+        <span class="slot-name">Foto ${i + 1}</span>
+        <input type="file" accept="image/jpeg,image/png,image/webp"
+               onchange="onKualiFileChange('${key}',${i},this)">
+      `;
+      container.appendChild(slot);
+    }
+  }
+}
+
+function onKualiFileChange(key, idx, input) {
+  const file = input.files[0];
+  if (!file) return;
+  kualiFiles[key][idx] = file;
+  const slot = document.getElementById(`kuali-slot-${key}-${idx}`);
+  slot.classList.add('filled');
+  const name = file.name.length > 22 ? file.name.substring(0, 20) + '…' : file.name;
+  slot.querySelector('.slot-name').textContent = name;
+  if (!slot.querySelector('.slot-clear')) {
+    const clr = document.createElement('span');
+    clr.className = 'slot-clear';
+    clr.textContent = '✕';
+    clr.onclick = (e) => { e.stopPropagation(); clearKualiSlot(key, idx); };
+    slot.appendChild(clr);
+  }
+}
+
+function clearKualiSlot(key, idx) {
+  kualiFiles[key][idx] = null;
+  const slot = document.getElementById(`kuali-slot-${key}-${idx}`);
+  slot.classList.remove('filled');
+  slot.querySelector('.slot-name').textContent = `Foto ${idx + 1}`;
+  const clr = slot.querySelector('.slot-clear');
+  if (clr) clr.remove();
+  const input = slot.querySelector('input[type=file]');
+  if (input) input.value = '';
+}
+
+function resetKualiForm() {
+  ['kuali-sample-name','kuali-analyst','kuali-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['kuali-organism-type','kuali-media-type'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['kuali-incubation-date','kuali-observation-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  for (const key of Object.keys(kualiFiles)) {
+    kualiFiles[key] = kualiFiles[key].map(() => null);
+  }
+  initKualiSlots();
+  document.getElementById('kuali-result-placeholder').style.display = 'block';
+  document.getElementById('kuali-result-panel').style.display = 'none';
+  document.getElementById('kuali-progress').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════
+// KUALITATIF - Submit (Gemini API)
+// ═══════════════════════════════════════════════════════════
+async function submitKualiSession() {
+  const sampleName = document.getElementById('kuali-sample-name').value.trim();
+  const analyst    = document.getElementById('kuali-analyst').value.trim();
+  if (!sampleName) { toast('Nama sampel wajib diisi', 'error'); return; }
+  if (!analyst)    { toast('Nama analis wajib diisi', 'error'); return; }
+
+  const missing = [];
+  for (const [key, cfg] of Object.entries(KUALI_CTRL_CONFIG)) {
+    kualiFiles[key].forEach((f, i) => {
+      if (!f) missing.push(`${cfg.label} Foto ${i + 1}`);
+    });
+  }
+  if (missing.length) {
+    toast(`Foto belum lengkap: ${missing.slice(0, 3).join(', ')}${missing.length > 3 ? ` +${missing.length - 3} lainnya` : ''}`, 'error');
+    return;
+  }
+
+  const btn = document.getElementById('kuali-submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Menganalisis dengan YOLO...';
+
+  const progress      = document.getElementById('kuali-progress');
+  const progressFill  = document.getElementById('kuali-progress-fill');
+  const progressLabel = document.getElementById('kuali-progress-label');
+  const progressDetail = document.getElementById('kuali-progress-detail');
+  progress.style.display = 'block';
+  progressFill.style.width = '5%';
+  progressLabel.textContent = 'Mengunggah dan menganalisis foto...';
+  progressDetail.textContent = 'Total: 9 foto akan dianalisis oleh YOLO (Positif/Negatif)';
+
+  // Build FormData — sama dengan kuanti, backend route berbeda
+  const fd = new FormData();
+  fd.append('sample_name', sampleName);
+  fd.append('analyst', analyst);
+  const orgType  = document.getElementById('kuali-organism-type').value;
+  const mediaType = document.getElementById('kuali-media-type').value;
+  const incDate  = document.getElementById('kuali-incubation-date').value;
+  const obsDate  = document.getElementById('kuali-observation-date').value;
+  const notes    = document.getElementById('kuali-notes').value.trim();
+  if (orgType)   fd.append('organism_type', orgType);
+  if (mediaType) fd.append('media_type', mediaType);
+  if (incDate)   fd.append('incubation_date', incDate);
+  if (obsDate)   fd.append('observation_date', obsDate);
+  if (notes)     fd.append('notes', notes);
+
+  const fieldMap = {
+    positive_product: ['positive_product_1', 'positive_product_2', 'positive_product_3'],
+    negative_product: ['negative_product_1', 'negative_product_2'],
+    negative_media:   ['negative_media_1',   'negative_media_2'],
+    positive_media:   ['positive_media_1',   'positive_media_2'],
+  };
+  for (const [key, fields] of Object.entries(fieldMap)) {
+    kualiFiles[key].forEach((file, i) => {
+      if (file) fd.append(fields[i], file, file.name);
+    });
+  }
+
+  const steps = [
+    [15, 'Menganalisis Kontrol Positif Produk (YOLO)...'],
+    [35, 'Menganalisis Kontrol Negatif Produk...'],
+    [52, 'Menganalisis Kontrol Negatif Media...'],
+    [68, 'Menganalisis Kontrol Positif Media...'],
+    [83, 'Memproses deteksi koloni...'],
+    [93, 'Merangkum hasil kualitatif...'],
+  ];
+  let stepIdx = 0;
+  const progInterval = setInterval(() => {
+    if (stepIdx < steps.length) {
+      progressFill.style.width = steps[stepIdx][0] + '%';
+      progressLabel.textContent = steps[stepIdx][1];
+      stepIdx++;
+    }
+  }, 2800);
+
+  try {
+    const r = await fetch(`${API}/api/development/qualitative-sessions`, {
+      method: 'POST',
+      body: fd,
+    });
+
+    clearInterval(progInterval);
+    progressFill.style.width = '100%';
+    progressLabel.textContent = 'Selesai!';
+
+    if (!r.ok) {
+      let msg = `HTTP ${r.status}`;
+      try { const err = await r.json(); msg = err.detail || msg; } catch {}
+      throw new Error(msg);
+    }
+
+    const data = await r.json();
+    renderKualiResult(data);
+
+    const passed = data.interpretation?.passed;
+    toast(
+      `Analisis kualitatif selesai — ${passed ? '✓ Semua kontrol sesuai' : '⚠ Ada kontrol tidak sesuai'}`,
+      passed ? 'success' : 'info'
+    );
+    setTimeout(() => { progress.style.display = 'none'; }, 2000);
+
+  } catch (e) {
+    clearInterval(progInterval);
+    progress.style.display = 'none';
+    toast('Analisis gagal: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🧬 Mulai Analisis Kualitatif';
+  }
+}
+
+function renderKualiResult(data) {
+  document.getElementById('kuali-result-placeholder').style.display = 'none';
+  const panel = document.getElementById('kuali-result-panel');
+  panel.style.display = 'block';
+
+  const interp = data.interpretation || {};
+  const groups = data.groups || {};
+
+  const ctrlMeta = [
+    { key: 'positive_product', label: 'Kontrol Positif Produk', expectedGrowth: true,  icon: '🟢', badgeCls: 'badge-green'  },
+    { key: 'negative_product', label: 'Kontrol Negatif Produk', expectedGrowth: false, icon: '🔴', badgeCls: 'badge-red'    },
+    { key: 'negative_media',   label: 'Kontrol Negatif Media',  expectedGrowth: false, icon: '🟡', badgeCls: 'badge-amber'  },
+    { key: 'positive_media',   label: 'Kontrol Positif Media',  expectedGrowth: true,  icon: '🔵', badgeCls: 'badge-blue'   },
+  ];
+
+  const bannerClass = interp.passed ? 'recovery-pass' : 'recovery-fail';
+  const bannerText  = interp.passed
+    ? '✓ Semua kelompok kontrol sesuai ekspektasi'
+    : '✕ Satu atau lebih kelompok kontrol tidak sesuai';
+
+  const groupCards = ctrlMeta.map(meta => {
+    const g = groups[meta.key] || {};
+    // results: array of { foto: 1, result: 'Positif'|'Negatif', confidence: 'Tinggi', notes: '...' }
+    const results = g.results || [];
+    const meanResult = g.mean_result || '—'; // 'Positif' or 'Negatif' or 'Mixed'
+    const isExpected = (meta.expectedGrowth && meanResult === 'Positif') ||
+                       (!meta.expectedGrowth && meanResult === 'Negatif');
+    const cardClass  = isExpected ? 'quali-pos' : meanResult === 'Mixed' ? 'quali-warn' : 'quali-neg';
+
+    const resultRows = results.map((r, i) => `
+      <div class="stat-row">
+        <span class="stat-key" style="font-size:12px">Foto ${i + 1}</span>
+        <span>
+          <span class="badge ${r.result === 'Positif' ? 'badge-green' : r.result === 'Negatif' ? 'badge-red' : 'badge-gray'}" style="font-size:11px">${escHtml(r.result || '—')}</span>
+          ${r.confidence ? `<span style="font-size:11px;color:var(--text3);margin-left:4px">(${escHtml(r.confidence)})</span>` : ''}
+        </span>
+      </div>
+      ${r.notes ? `<div style="font-size:11px;color:var(--text3);padding:0 0 6px;border-bottom:1px solid var(--border)">${escHtml(r.notes)}</div>` : ''}
+    `).join('');
+
+    const expectedLabel = meta.expectedGrowth ? 'Positif (ada pertumbuhan)' : 'Negatif (tidak ada pertumbuhan)';
+
+    return `
+      <div class="quali-result-card ${cardClass}">
+        <div class="quali-result-header">
+          ${meta.icon} ${meta.label}
+          <span class="badge ${meta.badgeCls}" style="margin-left:6px;font-size:10px">Ekspektasi: ${meta.expectedGrowth ? 'Positif' : 'Negatif'}</span>
+          <span class="badge ${isExpected ? 'badge-green' : meanResult === 'Mixed' ? 'badge-amber' : 'badge-red'}" style="margin-left:4px;font-size:10px">
+            ${isExpected ? '✓ Sesuai' : meanResult === 'Mixed' ? '⚠ Mixed' : '✕ Tidak Sesuai'}
+          </span>
+        </div>
+        <div class="quali-result-body">
+          <div class="stat-row" style="margin-bottom:8px">
+            <span class="stat-key" style="font-weight:600">Hasil Keseluruhan</span>
+            <span class="badge ${meanResult === 'Positif' ? 'badge-green' : meanResult === 'Negatif' ? 'badge-red' : 'badge-amber'}">${escHtml(meanResult)}</span>
+          </div>
+          ${resultRows || '<div style="font-size:13px;color:var(--text3)">Tidak ada data</div>'}
+          ${g.summary ? `<div style="font-size:12px;color:var(--text2);margin-top:8px;font-style:italic">${escHtml(g.summary)}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const issueHtml = (interp.issues || []).map(i => `
+    <div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;
+                color:${i.startsWith('✓') ? 'var(--accent)' : i.startsWith('✕') ? 'var(--red)' : 'var(--amber)'}">
+      ${escHtml(i)}
+    </div>
+  `).join('');
+
+  panel.innerHTML = `
+    <div class="recovery-banner ${bannerClass}" style="margin-bottom:1rem">
+      ${bannerText}
+      ${interp.summary ? `<div style="font-size:14px;font-weight:500;margin-top:4px">${escHtml(interp.summary)}</div>` : ''}
+    </div>
+
+    <div style="margin-bottom:1rem">
+      ${groupCards}
+    </div>
+
+    <div class="card" style="margin-bottom:1rem;padding:1rem">
+      <div style="font-weight:600;font-size:14px;margin-bottom:8px">Interpretasi Kualitatif</div>
+      ${issueHtml || '<div style="font-size:13px;color:var(--text3)">Tidak ada catatan.</div>'}
+    </div>
+
+    ${(data.analysis_ids || []).length ? `
+    <div class="card" style="padding:1rem">
+      <div style="font-weight:600;font-size:14px;margin-bottom:8px">Analisis Individual</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Kelompok Kontrol</th><th>Hasil</th><th>Aksi</th></tr></thead>
+          <tbody>
+            ${(data.analysis_ids || []).map((entry, idx) => `
+              <tr>
+                <td style="font-size:12px;color:var(--text3)">${escHtml(entry.label || 'Foto ' + (idx+1))}</td>
+                <td><span class="badge ${entry.result === 'Positif' ? 'badge-green' : entry.result === 'Negatif' ? 'badge-red' : 'badge-gray'}">${escHtml(entry.result || '—')}</span></td>
+                <td>${entry.id ? `<button class="btn btn-secondary btn-sm" onclick="viewAnalysis('${entry.id}')">Detail</button>` : '—'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>` : ''}
+
+    <!-- Unduh Laporan Kualitatif -->
+    <div class="card" style="padding:1rem;margin-top:1rem">
+      <div style="font-weight:600;font-size:14px;margin-bottom:10px">📄 Unduh Laporan Kualitatif</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:12px">
+        Laporan PDF ringkasan sesi, JSON, dan CSV tersedia.
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="generateKualiReport('${data.sample_id}','pdf',this)">⬇ PDF Ringkasan</button>
+        <button class="btn btn-secondary" onclick="generateKualiReport('${data.sample_id}','json',this)">⬇ JSON</button>
+        <button class="btn btn-secondary" onclick="generateKualiReport('${data.sample_id}','csv',this)">⬇ CSV</button>
+      </div>
+      <div id="kuali-report-links-${data.sample_id || 'sess'}" style="margin-top:10px"></div>
+    </div>
+  `;
+}
+// ─── LAPORAN SESI PENGEMBANGAN ────────────────────────────────────────────────
+async function generateDevReport(sampleId, fmt, btn) {
+  if (!sampleId) { toast('ID sesi tidak diketahui', 'error'); return; }
+  const origText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;display:inline-block"></div>';
+  try {
+    const r = await fetch(`${API}/api/development/sessions/${sampleId}/report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify([fmt]),
+    });
+    if (!r.ok) throw new Error((await r.json()).detail || 'Gagal generate');
+    const data = await r.json();
+
+    const linksEl = document.getElementById(`dev-report-links-${sampleId}`);
+    if (linksEl && data.download_urls && data.download_urls[fmt]) {
+      linksEl.innerHTML = `<a href="${API}${data.download_urls[fmt]}" target="_blank" class="btn btn-secondary btn-sm">⬇ Unduh ${fmt.toUpperCase()} Ringkasan</a>`;
+      toast(`Laporan ${fmt.toUpperCase()} ringkasan sesi berhasil di-generate`, 'success');
+    } else {
+      toast('Tidak ada laporan yang dihasilkan', 'warning');
+    }
+  } catch (e) {
+    toast('Gagal generate laporan: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origText;
+  }
+}
+
+async function generateKualiReport(sampleId, fmt, btn) {
+  if (!sampleId) { toast('ID sesi tidak diketahui', 'error'); return; }
+  const origText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;display:inline-block"></div>';
+  try {
+    const r = await fetch(`${API}/api/development/qualitative-sessions/${sampleId}/report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify([fmt]),
+    });
+    if (!r.ok) throw new Error((await r.json()).detail || 'Gagal generate');
+    const data = await r.json();
+
+    const linksEl = document.getElementById(`kuali-report-links-${sampleId}`);
+    if (linksEl && data.download_urls && data.download_urls[fmt]) {
+      const icon = fmt === 'pdf' ? '📄' : fmt === 'csv' ? '📊' : '📋';
+      linksEl.innerHTML += `<a href="${API}${data.download_urls[fmt]}" target="_blank" class="btn btn-secondary btn-sm" style="margin:2px 4px 2px 0">${icon} Unduh ${fmt.toUpperCase()}</a>`;
+      toast(`Laporan ${fmt.toUpperCase()} kualitatif berhasil di-generate`, 'success');
+    } else {
+      toast('Tidak ada laporan yang dihasilkan', 'warning');
+    }
+  } catch (e) {
+    toast('Gagal generate laporan: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origText;
+  }
+}
+
+</script>
+
+</body>
+</html>
