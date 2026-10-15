@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iLaboratories — Portal Laboratorium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F2EE;
+    --surface: #FDFCFA;
+    --surface2: #F0EDE8;
+    --border: #DDD9D0;
+    --border-strong: #C5C0B5;
+    --text: #1A1815;
+    --text2: #5C5850;
+    --text3: #9A9489;
+    --accent: #2D6A4F;
+    --accent-light: #E8F5EE;
+    --accent-dark: #1B4332;
+    --amber: #92400E;
+    --amber-light: #FEF3C7;
+    --red: #991B1B;
+    --red-light: #FEE2E2;
+    --blue: #1E40AF;
+    --blue-light: #DBEAFE;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --radius-lg: 16px;
+    --font-body: 'Outfit', sans-serif;
+    --font-display: 'Fraunces', serif;
+    --font-mono: 'DM Mono', monospace;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-theme="dark"] {
+    --bg: #0F1008;
+    --surface: #191A10;
+    --surface2: #22231A;
+    --border: #2E2F24;
+    --border-strong: #3E3F32;
+    --text: #F2F0E8;
+    --text2: #A8A598;
+    --text3: #6B6960;
+    --accent: #52B788;
+    --accent-light: #0D2B1E;
+    --accent-dark: #74C69D;
+    --amber: #FCD34D;
+    --amber-light: #2D1F04;
+    --red: #F87171;
+    --red-light: #2D0A0A;
+    --blue: #93C5FD;
+    --blue-light: #0A1A3A;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .logo:hover { opacity: 0.8; }
+
+  .logo span {
+    color: var(--text3);
+    font-weight: 300;
+    font-size: 1rem;
+    font-style: italic;
+  }
+
+  .nav {
+    display: flex;
+    gap: 0.25rem;
+    flex: 1;
+  }
+
+  .nav-btn {
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+
+  .nav-btn:hover { background: var(--surface2); color: var(--text); }
+  .nav-btn.active { background: var(--accent-light); color: var(--accent); }
+  .nav-btn.disabled { color: var(--text3); cursor: not-allowed; opacity: 0.55; }
+  .nav-btn.disabled:hover { background: transparent; color: var(--text3); }
+
+  .theme-toggle {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition);
+    white-space: nowrap;
+  }
+
+  .theme-toggle:hover { border-color: var(--border-strong); }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .section-subtitle {
+    font-size: 14px;
+    color: var(--text3);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .today-date {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    white-space: nowrap;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    gap: 4px;
+  }
+
+  .badge-green { background: var(--accent-light); color: var(--accent); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-gray { background: var(--surface2); color: var(--text2); }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text2);
+  }
+
+  .btn-secondary:hover { background: var(--surface2); color: var(--text); }
+  .btn-disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+  /* LAYOUT GRID */
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .layout-grid { grid-template-columns: 1fr; }
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .card-subtitle {
+    font-size: 12.5px;
+    color: var(--text3);
+    margin-bottom: 1rem;
+  }
+
+  /* MADING / BULLETIN */
+  .mading-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .mading-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .mading-item:first-child { padding-top: 0; }
+
+  .mading-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .mading-body { flex: 1; min-width: 0; }
+
+  .mading-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .mading-desc {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+  .mading-meta {
+    font-size: 11.5px;
+    color: var(--text3);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+
+  /* MODULE CARDS */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: var(--transition);
+  }
+
+  .module-card.active-module:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .module-card.soon { opacity: 0.65; }
+
+  .module-icon-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .module-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .module-card.soon .module-icon { background: var(--surface2); }
+
+  .module-name {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .module-desc {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  /* SIDEBAR MINI LIST */
+  .side-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .side-list-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .side-list-item:first-child { padding-top: 0; }
+
+  .side-list-label { color: var(--text2); }
+  .side-list-value { font-family: var(--font-mono); color: var(--text); font-weight: 500; }
+
+  footer.page-footer {
+    text-align: center;
+    padding: 2rem 0 1rem;
+    font-size: 12.5px;
+    color: var(--text3);
+  }
+
+  @media (max-width: 720px) {
+    .topbar { padding: 0 1rem; }
+    .nav-btn span { display: none; }
+    .nav-btn { padding: 6px 10px; }
+    .main { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="logo" href="ilaboratories.html" title="Ke Dashboard">🧪 iLaboratories <span>portal lab</span></a>
+  <nav class="nav">
+    <a class="nav-btn" href="stockopname.html" id="nav-stockopname">
+      📦 <span>Stock Opname</span>
+    </a>
+    <a class="nav-btn" href="schedule.html" id="nav-schedule">
+      🗓️ <span>Schedule</span>
+    </a>
+    <a class="nav-btn" href="instrument.html" id="nav-instrument">
+      🧰 <span>Instrument</span>
+    </a>
+    <a class="nav-btn" href="microcount.html" id="nav-microbiology">
+      🦠 <span>Microbiology</span>
+    </a>
+  </nav>
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-label">Dark</span>
+    </button>
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="section-header">
+    <div>
+      <div class="section-title">Dashboard</div>
+      <div class="section-subtitle">Mading harian laboratorium — informasi &amp; akses modul</div>
+    </div>
+    <div class="today-date" id="today-date">—</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Modul Aktif</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">4</div>
+      <div class="stat-label">Total Modul</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color:var(--accent)">Online</div>
+      <div class="stat-label">Status Sistem</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-week">—</div>
+      <div class="stat-label">Minggu Berjalan</div>
+    </div>
+  </div>
+
+  <div class="layout-grid">
+    <!-- MADING / BULLETIN BOARD -->
+    <div class="card">
+      <div class="card-title">📌 Papan Pengumuman</div>
+      <div class="card-subtitle">Informasi &amp; catatan harian laboratorium</div>
+
+      <div id="mading-list">
+        <div class="mading-item">
+          <div class="mading-icon">🎉</div>
+          <div class="mading-body">
+            <div class="mading-title">Selamat datang di iLaboratories</div>
+            <div class="mading-desc">Portal terpadu untuk seluruh sistem laboratorium. Setiap modul (Mikrobiologi, Kimia, Fisika) dapat diakses langsung dari navbar di atas.</div>
+            <div class="mading-meta" data-meta-today></div>
+          </div>
+        </div>
+        <div class="mading-item">
+          <div class="mading-icon">🦠</div>
+          <div class="mading-body">
+            <div class="mading-title">Modul Microbiology (MicroCount) aktif</div>
+            <div class="mading-desc">Modul penghitungan koloni mikrobial kini terhubung ke portal ini. Klik menu <strong>Microbiology</strong> di navbar untuk membuka aplikasi.</div>
+            <div class="mading-meta" data-meta-today></div>
+          </div>
+        </div>
+        <div class="mading-item">
+          <div class="mading-icon">📦</div>
+          <div class="mading-body">
+            <div class="mading-title">Modul Stock Opname kini tersedia</div>
+            <div class="mading-desc">Kelola inventaris reagen &amp; consumable, lakukan penghitungan fisik, dan tinjau riwayat opname. Klik menu <strong>Stock Opname</strong> di navbar untuk membuka.</div>
+            <div class="mading-meta" data-meta-today></div>
+          </div>
+        </div>
+        <div class="mading-item">
+          <div class="mading-icon">🛠️</div>
+          <div class="mading-body">
+            <div class="mading-title">Modul Schedule &amp; Instrument — dalam pengembangan</div>
+            <div class="mading-desc">Modul untuk penjadwalan dan instrumen laboratorium sedang disiapkan dan akan menyusul pada portal ini.</div>
+            <div class="mading-meta" data-meta-today></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="card">
+      <div class="card-title">ℹ️ Ringkasan Portal</div>
+      <div class="card-subtitle">Info singkat sistem</div>
+      <div class="side-list-item">
+        <span class="side-list-label">Nama sistem</span>
+        <span class="side-list-value">iLaboratories</span>
+      </div>
+      <div class="side-list-item">
+        <span class="side-list-label">Modul terpasang</span>
+        <span class="side-list-value">MicroCount, Stock Opname, Schedule</span>
+      </div>
+      <div class="side-list-item">
+        <span class="side-list-label">Versi portal</span>
+        <span class="side-list-value">v1.0</span>
+      </div>
+      <div class="side-list-item">
+        <span class="side-list-label">Tema</span>
+        <span class="side-list-value" id="theme-status">Light</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE ACCESS -->
+  <div style="margin-top: 2rem;">
+    <div class="section-header" style="margin-bottom: 1rem;">
+      <div>
+        <div class="section-title" style="font-size: 1.3rem;">Modul Laboratorium</div>
+        <div class="section-subtitle">Pilih modul untuk mulai bekerja</div>
+      </div>
+    </div>
+
+    <div class="module-grid">
+      <div class="module-card active-module" onclick="window.location.href='stockopname.html'" style="cursor:pointer">
+        <div class="module-icon-row">
+          <div class="module-icon">📦</div>
+          <span class="badge badge-green">Aktif</span>
+        </div>
+        <div class="module-name">Stock Opname</div>
+        <div class="module-desc">Inventaris reagen &amp; consumable, penghitungan fisik (opname), selisih stok, dan riwayat opname.</div>
+        <a href="stockopname.html" class="btn btn-primary" style="justify-content:center">Buka Modul →</a>
+      </div>
+
+      <div class="module-card active-module" onclick="window.location.href='schedule.html'" style="cursor:pointer">
+        <div class="module-icon-row">
+          <div class="module-icon">🗓️</div>
+          <span class="badge badge-green">Aktif</span>
+        </div>
+        <div class="module-name">Schedule</div>
+        <div class="module-desc">Jadwal analisa: alat yang dipakai (HPLC, LAF, BSC), jumlah sampel, analis, dan PIC.</div>
+        <a href="schedule.html" class="btn btn-primary" style="justify-content:center">Buka Modul →</a>
+      </div>
+
+      <div class="module-card active-module" onclick="window.location.href='instrument.html'" style="cursor:pointer">
+        <div class="module-icon-row">
+          <div class="module-icon">🧰</div>
+          <span class="badge badge-green">Aktif</span>
+        </div>
+        <div class="module-name">Instrument</div>
+        <div class="module-desc">Daftar alat laboratorium: merk, nomor instrumen, tipe, dan jadwal kalibrasi.</div>
+        <a href="instrument.html" class="btn btn-primary" style="justify-content:center">Buka Modul →</a>
+      </div>
+
+      <div class="module-card active-module" onclick="window.location.href='microcount.html'" style="cursor:pointer">
+        <div class="module-icon-row">
+          <div class="module-icon">🦠</div>
+          <span class="badge badge-green">Aktif</span>
+        </div>
+        <div class="module-name">Microbiology</div>
+        <div class="module-desc">MicroCount — analisis &amp; penghitungan koloni mikrobial, manajemen sampel, dan riwayat pengujian.</div>
+        <a href="microcount.html" class="btn btn-primary" style="justify-content:center">Buka Modul →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="page-footer">iLaboratories · Portal Sistem Laboratorium</footer>
+</main>
+
+<script>
+  // ═══════════════════════════════════════════════════════════
+  // THEME (selaras dengan modul MicroCount — key: mc-theme)
+  // ═══════════════════════════════════════════════════════════
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-icon').textContent = isDark ? '🌙' : '☀️';
+    document.getElementById('theme-label').textContent = isDark ? 'Dark' : 'Light';
+    document.getElementById('theme-status').textContent = next === 'dark' ? 'Dark' : 'Light';
+    localStorage.setItem('mc-theme', next);
+  }
+
+  (function initTheme() {
+    const saved = localStorage.getItem('mc-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('theme-icon').textContent = saved === 'dark' ? '☀️' : '🌙';
+    document.getElementById('theme-label').textContent = saved === 'dark' ? 'Light' : 'Dark';
+    document.getElementById('theme-status').textContent = saved === 'dark' ? 'Dark' : 'Light';
+  })();
+
+  // ═══════════════════════════════════════════════════════════
+  // TANGGAL HARI INI (mading)
+  // ═══════════════════════════════════════════════════════════
+  (function initDate() {
+    const now = new Date();
+    const dateFmt = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    document.getElementById('today-date').textContent = dateFmt;
+
+    const timeFmt = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    document.querySelectorAll('[data-meta-today]').forEach(el => {
+      el.textContent = `${dateFmt} · ${timeFmt}`;
+    });
+
+    // Minggu ke berapa dalam tahun berjalan
+    const start = new Date(now.getFullYear(), 0, 1);
+    const days = Math.floor((now - start) / (24 * 60 * 60 * 1000));
+    const week = Math.ceil((days + start.getDay() + 1) / 7);
+    document.getElementById('stat-week').textContent = 'Minggu ' + week;
+  })();
+</script>
+
+</body>
+</html>

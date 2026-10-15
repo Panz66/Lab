@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Opname — iLaboratories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F2EE; --surface: #FDFCFA; --surface2: #F0EDE8;
+    --border: #DDD9D0; --border-strong: #C5C0B5;
+    --text: #1A1815; --text2: #5C5850; --text3: #9A9489;
+    --accent: #2D6A4F; --accent-light: #E8F5EE; --accent-dark: #1B4332;
+    --amber: #92400E; --amber-light: #FEF3C7;
+    --red: #991B1B; --red-light: #FEE2E2;
+    --blue: #1E40AF; --blue-light: #DBEAFE;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+    --radius: 10px; --radius-sm: 6px; --radius-lg: 16px;
+    --font-body: 'Outfit', sans-serif;
+    --font-display: 'Fraunces', serif;
+    --font-mono: 'DM Mono', monospace;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  [data-theme="dark"] {
+    --bg: #0F1008; --surface: #191A10; --surface2: #22231A;
+    --border: #2E2F24; --border-strong: #3E3F32;
+    --text: #F2F0E8; --text2: #A8A598; --text3: #6B6960;
+    --accent: #52B788; --accent-light: #0D2B1E; --accent-dark: #74C69D;
+    --amber: #FCD34D; --amber-light: #2D1F04;
+    --red: #F87171; --red-light: #2D0A0A;
+    --blue: #93C5FD; --blue-light: #0A1A3A;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+
+  /* TOPBAR */
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; gap: 1rem; height: 60px; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+  .back-link { display: flex; align-items: center; gap: 6px; color: var(--text3); text-decoration: none; font-size: 13px; font-weight: 500; padding: 6px 10px; border-radius: var(--radius-sm); transition: var(--transition); white-space: nowrap; }
+  .back-link:hover { background: var(--surface2); color: var(--text); }
+  .divider-v { width: 1px; height: 24px; background: var(--border); }
+  .logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; color: var(--accent); letter-spacing: -0.02em; white-space: nowrap; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .logo span { color: var(--text3); font-weight: 300; font-size: 1rem; font-style: italic; }
+  .spacer { flex: 1; }
+  .theme-toggle { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; cursor: pointer; font-size: 14px; font-family: var(--font-body); color: var(--text2); display: flex; align-items: center; gap: 6px; transition: var(--transition); white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--border-strong); }
+
+  /* TABS */
+  .tabs-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; gap: 0.25rem; overflow-x: auto; }
+  .tab-btn { padding: 12px 16px; border: none; background: transparent; color: var(--text2); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent; transition: var(--transition); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+  .tab-btn:hover { color: var(--text); background: var(--surface2); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); display: none; }
+  .tab-dot.on { display: inline-block; }
+
+  .main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+  .section-title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+  .section-subtitle { font-size: 14px; color: var(--text3); font-style: italic; margin-top: 2px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow); }
+  .card-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+  .card-subtitle { font-size: 12.5px; color: var(--text3); margin-bottom: 1rem; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; text-align: center; }
+  .stat-value { font-family: var(--font-mono); font-size: 1.9rem; font-weight: 500; color: var(--accent); line-height: 1; margin-bottom: 6px; }
+  .stat-value.warn { color: var(--amber); }
+  .stat-value.bad { color: var(--red); }
+  .stat-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+
+  .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 12px; font-weight: 500; gap: 4px; white-space: nowrap; }
+  .badge-green { background: var(--accent-light); color: var(--accent); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-gray { background: var(--surface2); color: var(--text2); }
+
+  /* BUTTONS */
+  .btn { padding: 9px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 500; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+  .btn:hover { background: var(--surface2); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn-danger { background: var(--red-light); border-color: transparent; color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-sm { padding: 5px 10px; font-size: 12.5px; }
+  .btn-icon { padding: 5px 8px; font-size: 13px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* FORM */
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 12.5px; font-weight: 500; color: var(--text2); }
+  input, select, textarea { font-family: var(--font-body); font-size: 14px; padding: 8px 11px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); transition: var(--transition); width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+  textarea { resize: vertical; min-height: 60px; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .form-grid .full { grid-column: 1 / -1; }
+
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+  .toolbar .search { flex: 1; min-width: 200px; }
+  .toolbar select { width: auto; min-width: 150px; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; padding: 10px 12px; background: var(--surface2); color: var(--text2); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  .mono { font-family: var(--font-mono); }
+  .num { text-align: right; font-family: var(--font-mono); }
+  .item-name { font-weight: 600; }
+  .item-sub { font-size: 12px; color: var(--text3); }
+  .actions { display: flex; gap: 4px; justify-content: flex-end; }
+  .count-input { width: 100px; text-align: right; font-family: var(--font-mono); }
+  .diff-pos { color: var(--accent); font-weight: 600; }
+  .diff-neg { color: var(--red); font-weight: 600; }
+  .diff-zero { color: var(--text3); }
+  tr.counted td { background: var(--accent-light); }
+  tr.counted:hover td { background: var(--accent-light); }
+
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); }
+  .empty .big { font-size: 2.5rem; margin-bottom: 8px; }
+  .empty p { margin-bottom: 14px; font-size: 14px; }
+
+  /* PROGRESS */
+  .progress { height: 8px; background: var(--surface2); border-radius: 8px; overflow: hidden; }
+  .progress > div { height: 100%; background: var(--accent); transition: width 0.3s; }
+  .opname-head { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+  .opname-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 13px; color: var(--text2); margin-top: 4px; }
+  .opname-meta b { color: var(--text); }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--text2); margin: 14px 0 6px; font-family: var(--font-mono); }
+
+  /* HISTORY */
+  .hist-card { margin-bottom: 1rem; padding: 1.25rem 1.5rem; }
+  .hist-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+  .hist-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; }
+  .hist-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .hist-detail { margin-top: 1rem; display: none; }
+  .hist-detail.open { display: block; }
+
+  /* MODAL */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 500; padding: 1rem; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; padding: 1.5rem; border: 1px solid var(--border); }
+  .modal h3 { font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+  .check-row { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; margin-top: 12px; }
+  .check-row input { width: auto; margin-top: 4px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+  .summary-grid .stat-card { padding: 0.8rem; }
+  .summary-grid .stat-value { font-size: 1.5rem; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: var(--radius-sm); font-size: 14px; box-shadow: var(--shadow-md); z-index: 600; opacity: 0; transform: translateY(10px); transition: var(--transition); pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  footer.page-footer { text-align: center; padding: 2rem 0 1rem; font-size: 12.5px; color: var(--text3); }
+
+  @media (max-width: 720px) {
+    .topbar, .tabs-bar { padding-left: 1rem; padding-right: 1rem; }
+    .main { padding: 1.25rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .opname-head { grid-template-columns: 1fr; }
+    .back-link span { display: none; }
+    .logo span { display: none; }
+  }
+
+  /* ===== TAMBAHAN: modul reagen / consumable / mutasi / riwayat ===== */
+  .tab-btn .tab-count { background: var(--surface2); color: var(--text3); border-radius: 10px; padding: 0 7px; font-size: 11.5px; font-family: var(--font-mono); }
+  .tab-btn.active .tab-count { background: var(--accent-light); color: var(--accent); }
+  .hide { display: none !important; }
+  .seg { display: inline-flex; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); }
+  .seg button { border: none; background: transparent; padding: 9px 18px; font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--text2); cursor: pointer; transition: var(--transition); }
+  .seg button + button { border-left: 1px solid var(--border-strong); }
+  .seg button:hover { background: var(--surface2); }
+  .seg button.on-in { background: var(--accent); color: #fff; }
+  .seg button.on-out { background: var(--red); color: #fff; }
+  [data-theme="dark"] .seg button.on-out { color: #1a0505; }
+  .seg button.on { background: var(--accent); color: #fff; }
+  .mut-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+  .form-section { border-top: 1px dashed var(--border-strong); margin-top: 16px; padding-top: 14px; }
+  .form-section-title { font-size: 12.5px; font-weight: 600; color: var(--text2); margin-bottom: 10px; }
+  .info-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; color: var(--text2); display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 14px; }
+  .info-box b { color: var(--text); font-weight: 600; }
+  .info-box .full { grid-column: 1 / -1; }
+  .preview { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--accent-light); color: var(--accent); font-family: var(--font-mono); font-size: 13.5px; }
+  .preview.bad { background: var(--red-light); color: var(--red); }
+  .hint { font-size: 12px; color: var(--text3); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .chip { border: 1px solid var(--border-strong); background: var(--surface); color: var(--text2); border-radius: 20px; padding: 5px 14px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+  .chip:hover { background: var(--surface2); }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip .n { font-family: var(--font-mono); opacity: .75; margin-left: 4px; }
+  .qty-in { color: var(--accent); font-weight: 600; }
+  .qty-out { color: var(--red); font-weight: 600; }
+  tr.detail-row td { background: var(--surface2); padding: 12px; }
+  tr.detail-row:hover td { background: var(--surface2); }
+  td.wrap { white-space: normal; min-width: 160px; }
+  .dim { color: var(--text3); }
+  .exp-bad { color: var(--red); font-weight: 600; }
+  .exp-warn { color: var(--amber); font-weight: 600; }
+  @media (max-width: 960px) { .mut-layout { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="back-link" href="ilaboratories.html" title="Kembali ke Dashboard">← <span>iLaboratories</span></a>
+  <div class="divider-v"></div>
+  <a class="logo" href="stockopname.html">📦 Stock Opname <span>reagen &amp; consumable lab</span></a>
+  <div class="spacer"></div>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌙</span>
+    <span id="theme-label">Dark</span>
+  </button>
+</header>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" id="tab-reagen" onclick="goPage('reagen')">🧪 List Reagen <span class="tab-count" id="cnt-reagen">0</span></button>
+  <button class="tab-btn" id="tab-consumable" onclick="goPage('consumable')">📦 List Consumable <span class="tab-count" id="cnt-consumable">0</span></button>
+  <button class="tab-btn" id="tab-mutasi" onclick="goPage('mutasi')">⇄ Tambah / Potong Stok</button>
+  <button class="tab-btn" id="tab-opname" onclick="goPage('opname')">✅ Stock Opname <span class="tab-dot" id="draft-dot" title="Ada opname yang sedang berjalan"></span></button>
+  <button class="tab-btn" id="tab-riwayat" onclick="goPage('riwayat')">🕘 Riwayat</button>
+</div>
+
+<main class="main">
+
+  <!-- ═════════ LIST REAGEN ═════════ -->
+  <section class="page active" id="page-reagen"></section>
+
+  <!-- ═════════ LIST CONSUMABLE ═════════ -->
+  <section class="page" id="page-consumable"></section>
+
+  <!-- ═════════ TAMBAH / POTONG STOK ═════════ -->
+  <section class="page" id="page-mutasi">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Tambah / Potong Stok</div>
+        <div class="section-subtitle">Catat barang masuk dan barang keluar — setiap transaksi tersimpan di Riwayat</div>
+      </div>
+    </div>
+
+    <div class="mut-layout">
+      <div class="card">
+        <div class="seg" style="margin-bottom:1rem">
+          <button id="seg-in" onclick="setKind('in')">＋ Tambah Stok</button>
+          <button id="seg-out" onclick="setKind('out')">－ Potong Stok</button>
+        </div>
+
+        <div class="form-grid">
+          <div class="field"><label>Jenis barang</label>
+            <select id="m-type" onchange="syncMut()">
+              <option value="reagen">Reagen</option>
+              <option value="consumable">Consumable</option>
+            </select></div>
+          <div class="field" id="grp-mode"><label>Tujuan penambahan</label>
+            <select id="m-mode" onchange="syncMut()">
+              <option value="existing">Tambah ke batch yang sudah ada</option>
+              <option value="new">Batch baru (BN / merk baru)</option>
+            </select></div>
+
+          <div class="field full" id="grp-existing"><label>Pilih item / batch *</label>
+            <select id="m-item" onchange="updatePreview()"></select>
+            <div class="hint" id="m-item-hint">Urut berdasarkan ED terdekat (FEFO).</div>
+          </div>
+          <div class="full hide" id="m-info"></div>
+        </div>
+
+        <!-- batch baru -->
+        <div class="form-section hide" id="grp-new">
+          <div class="form-section-title">Data batch baru</div>
+          <div class="form-grid">
+            <div class="field full"><label>Nama item *</label><input id="n-name" placeholder="mis. Plate Count Agar"></div>
+            <div class="field"><label>Merk</label><input id="n-brand" placeholder="mis. Merck, Oxoid, Himedia"></div>
+            <div class="field"><label>Batch Number (BN)</label><input id="n-bn"></div>
+            <div class="field"><label>Tanggal kadaluarsa (ED)</label><input id="n-exp" type="date"></div>
+            <div class="field"><label>Satuan *</label><input id="n-unit" placeholder="mis. botol, pcs, box"></div>
+            <div class="field"><label>Stok minimum</label><input id="n-min" type="number" min="0" step="any" value="0"></div>
+            <div class="field"><label>Lokasi simpan</label><input id="n-loc" placeholder="mis. Lemari A / Rak 2"></div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Detail transaksi</div>
+          <div class="form-grid">
+            <div class="field"><label id="m-date-label">Tanggal datang *</label><input id="m-date" type="date"></div>
+            <div class="field"><label>Jumlah * <span class="hint" id="m-unit-hint"></span></label><input id="m-qty" type="number" min="0" step="any" placeholder="0" oninput="updatePreview()"></div>
+            <div class="field"><label>Petugas *</label><input id="m-officer" placeholder="Nama petugas"></div>
+
+            <div class="field" id="grp-supplier"><label>Supplier / pengirim</label><input id="m-supplier"></div>
+            <div class="field hide" id="grp-purpose"><label>Keperluan</label>
+              <select id="m-purpose">
+                <option>Analisis rutin</option>
+                <option>Validasi / verifikasi metode</option>
+                <option>Preparasi media / larutan</option>
+                <option>Kalibrasi / QC</option>
+                <option>Rusak / terkontaminasi</option>
+                <option>Kadaluarsa (dibuang)</option>
+                <option>Lainnya</option>
+              </select></div>
+            <div class="field"><label id="m-ref-label">No. dokumen (SJ / PO)</label><input id="m-ref"></div>
+            <div class="field full"><label>Catatan</label><textarea id="m-note" placeholder="Opsional"></textarea></div>
+          </div>
+          <div class="preview hide" id="m-preview"></div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap">
+          <button class="btn btn-primary" id="m-submit" onclick="submitMutasi()">Simpan Transaksi</button>
+          <button class="btn" onclick="resetMut()">Bersihkan</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Transaksi terbaru</div>
+        <div class="card-subtitle">8 transaksi terakhir</div>
+        <div id="m-recent"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ OPNAME ═════════ -->
+  <section class="page" id="page-opname">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Stock Opname</div>
+        <div class="section-subtitle">Hitung stok fisik dan bandingkan dengan catatan sistem</div>
+      </div>
+    </div>
+    <div id="opname-body"></div>
+  </section>
+
+  <!-- ═════════ RIWAYAT ═════════ -->
+  <section class="page" id="page-riwayat">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Riwayat</div>
+        <div class="section-subtitle">Seluruh aktivitas tambah stok, potong stok, dan stock opname</div>
+      </div>
+      <button class="btn" onclick="exportHistoryCSV()">⬇ Ekspor CSV</button>
+    </div>
+    <div class="card">
+      <div class="chips" id="h-chips"></div>
+      <div class="toolbar">
+        <input class="search" type="search" id="h-search" placeholder="🔍 Cari nama, merk, BN, petugas, keterangan…" oninput="renderHistory()">
+        <select id="h-type" onchange="renderHistory()">
+          <option value="">Reagen &amp; consumable</option>
+          <option value="reagen">Reagen saja</option>
+          <option value="consumable">Consumable saja</option>
+        </select>
+      </div>
+      <div id="history-body"></div>
+    </div>
+  </section>
+
+  <footer class="page-footer">iLaboratories · Modul Stock Opname</footer>
+</main>
+
+<!-- MODAL: EDIT ITEM -->
+<div class="modal-bg" id="item-modal" onclick="if(event.target===this)closeModal('item-modal')">
+  <div class="modal">
+    <h3>Edit Data Batch</h3>
+    <div class="form-grid">
+      <div class="field"><label>Jenis</label>
+        <select id="f-type"><option value="reagen">Reagen</option><option value="consumable">Consumable</option></select></div>
+      <div class="field"><label>Satuan</label><input id="f-unit" placeholder="mis. botol, pcs, box"></div>
+      <div class="field full"><label>Nama item *</label><input id="f-name"></div>
+      <div class="field"><label>Merk</label><input id="f-brand"></div>
+      <div class="field"><label>Batch Number (BN)</label><input id="f-bn"></div>
+      <div class="field"><label>Tanggal kadaluarsa (ED)</label><input id="f-exp" type="date"></div>
+      <div class="field"><label>Tanggal datang</label><input id="f-arrival" type="date"></div>
+      <div class="field"><label>Tanggal terakhir diambil</label><input id="f-taken" type="date"></div>
+      <div class="field"><label>Stok minimum</label><input id="f-min" type="number" min="0" step="any"></div>
+      <div class="field full"><label>Lokasi simpan</label><input id="f-loc" placeholder="mis. Lemari A / Rak 2"></div>
+      <div class="field full"><label>Jumlah saat ini</label><input id="f-qty" disabled>
+        <div class="hint">Jumlah hanya bisa diubah lewat menu Tambah / Potong Stok atau Stock Opname agar tercatat di riwayat.</div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('item-modal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveItem()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: FINISH OPNAME -->
+<div class="modal-bg" id="finish-modal" onclick="if(event.target===this)closeModal('finish-modal')">
+  <div class="modal">
+    <h3>Selesaikan Opname</h3>
+    <div id="finish-summary"></div>
+    <label class="check-row">
+      <input type="checkbox" id="apply-adjust" checked>
+      <span>Sesuaikan stok sistem dengan hasil hitung fisik (untuk item yang dihitung)</span>
+    </label>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('finish-modal')">Kembali</button>
+      <button class="btn btn-primary" onclick="confirmFinish()">Simpan Hasil</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// THEME (selaras dengan portal — key: mc-theme)
+// ═══════════════════════════════════════════════════════════
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  applyThemeLabel(next);
+  try { localStorage.setItem('mc-theme', next); } catch (e) {}
+}
+function applyThemeLabel(t) {
+  document.getElementById('theme-icon').textContent = t === 'dark' ? '☀️' : '🌙';
+  document.getElementById('theme-label').textContent = t === 'dark' ? 'Light' : 'Dark';
+}
+(function initTheme() {
+  let saved = 'light';
+  try { saved = localStorage.getItem('mc-theme') || 'light'; } catch (e) {}
+  document.documentElement.setAttribute('data-theme', saved);
+  applyThemeLabel(saved);
+})();
+
+// ═══════════════════════════════════════════════════════════
+// STORAGE
+// Item = satu batch:
+//   {id, type:'reagen'|'consumable', name, brand, bn, expiry, arrival, qty, unit, min, location, taken}
+// Transaksi: {id, kind:'in'|'out', itemId, type, name, brand, bn, expiry, unit, qty, before, after,
+//             date, officer, supplier, purpose, ref, note, createdAt}
+// ═══════════════════════════════════════════════════════════
+const K_ITEMS = 'ilab-stock-items';
+const K_TX    = 'ilab-stock-tx';
+const K_OPN   = 'ilab-stock-opnames';
+const K_DRAFT = 'ilab-stock-draft';
+
+function load(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch (e) { return fallback; }
+}
+function save(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); }
+  catch (e) { toast('Gagal menyimpan data (penyimpanan penuh / diblokir)'); }
+}
+
+let items   = load(K_ITEMS, []);
+let txs     = load(K_TX, []);
+let opnames = load(K_OPN, []);
+let draft   = load(K_DRAFT, null);   // {id, date, officer, note, scope, counts:{itemId:value}, notes:{itemId:text}}
+let editingId = null;
+let histFilter = 'all';
+let mutKind = 'in';
+
+const TYPES = {
+  reagen:     { label: 'Reagen',     icon: '🧪', subtitle: 'Daftar reagen & media laboratorium per batch' },
+  consumable: { label: 'Consumable', icon: '📦', subtitle: 'Daftar bahan habis pakai laboratorium per batch' }
+};
+
+// Migrasi data lama (versi "Inventaris" gabungan) → struktur batch baru
+(function migrate() {
+  if (!items.some(i => !i.type)) return;
+  items = items.map(i => {
+    if (i.type) return i;
+    const isCons = /consumable/i.test(i.category || '');
+    return {
+      id: i.id, type: isCons ? 'consumable' : 'reagen',
+      name: i.name, brand: '', bn: i.lot || '', expiry: i.expiry || '', arrival: '',
+      qty: i.stock ?? 0, unit: i.unit || '', min: i.min || 0, location: i.location || '', taken: '',
+      code: i.code || '', updatedAt: i.updatedAt
+    };
+  });
+  save(K_ITEMS, items);
+})();
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dv = v => v ? esc(v) : '<span class="dim">—</span>';
+const fmtNum = n => (Math.round(n * 1000) / 1000).toLocaleString('id-ID');
+const todayISO = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+const fmtDate = iso => { if (!iso) return '—'; const d = new Date(iso.length === 10 ? iso + 'T00:00:00' : iso); return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }); };
+const fmtDateTime = iso => new Date(iso).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+function daysUntil(iso) {
+  if (!iso) return null;
+  const a = new Date(iso + 'T00:00:00'), b = new Date(todayISO() + 'T00:00:00');
+  return Math.round((a - b) / 86400000);
+}
+
+function itemStatus(it) {
+  const flags = [];
+  const d = daysUntil(it.expiry);
+  if (it.qty <= 0) flags.push('empty');
+  else if (it.min > 0 && it.qty <= it.min) flags.push('low');
+  if (d !== null && d <= 30) flags.push('exp');
+  return flags;
+}
+
+function statusBadges(it) {
+  const f = itemStatus(it), out = [];
+  const d = daysUntil(it.expiry);
+  if (f.includes('empty')) out.push('<span class="badge badge-red">Habis</span>');
+  else if (f.includes('low')) out.push('<span class="badge badge-amber">Menipis</span>');
+  if (f.includes('exp')) out.push(d < 0 ? '<span class="badge badge-red">Kadaluarsa</span>' : `<span class="badge badge-amber">Exp ${d} hr</span>`);
+  if (!out.length) out.push('<span class="badge badge-green">Normal</span>');
+  return out.join(' ');
+}
+
+function expCell(it) {
+  if (!it.expiry) return '<span class="dim">—</span>';
+  const d = daysUntil(it.expiry);
+  const cls = d < 0 ? 'exp-bad' : d <= 30 ? 'exp-warn' : '';
+  return `<span class="${cls}">${fmtDate(it.expiry)}</span>`;
+}
+
+// label ringkas satu batch untuk dropdown
+function batchLabel(it) {
+  return `${it.name} · ${it.brand || 'tanpa merk'} · BN ${it.bn || '-'} · ED ${fmtDate(it.expiry)} · stok ${fmtNum(it.qty)} ${it.unit || ''}`;
+}
+
+function nowISO() { return new Date().toISOString(); }
+
+let toastTimer;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function openModal(id) { $(id).classList.add('open'); }
+function closeModal(id) { $(id).classList.remove('open'); }
+
+function downloadCSV(filename, rows) {
+  const csv = rows.map(r => r.map(c => {
+    let v = String(c ?? '');
+    if (/^[=+\-@]/.test(v)) v = "'" + v;        // cegah formula injection di spreadsheet
+    return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  }).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGASI
+// ═══════════════════════════════════════════════════════════
+const PAGES = ['reagen', 'consumable', 'mutasi', 'opname', 'riwayat'];
+
+function goPage(name) {
+  if (!PAGES.includes(name)) name = 'reagen';
+  PAGES.forEach(p => {
+    $('page-' + p).classList.toggle('active', p === name);
+    $('tab-' + p).classList.toggle('active', p === name);
+  });
+  updateCounts(); updateDraftDot();
+  if (name === 'reagen' || name === 'consumable') renderList(name);
+  if (name === 'mutasi') initMutasi();
+  if (name === 'opname') renderOpname();
+  if (name === 'riwayat') renderHistory();
+  history.replaceState(null, '', '#' + name);
+  window.scrollTo(0, 0);
+}
+
+function updateCounts() {
+  $('cnt-reagen').textContent = items.filter(i => i.type === 'reagen').length;
+  $('cnt-consumable').textContent = items.filter(i => i.type === 'consumable').length;
+}
+
+// ═══════════════════════════════════════════════════════════
+// LIST REAGEN / LIST CONSUMABLE  (satu template, dua halaman)
+// ═══════════════════════════════════════════════════════════
+function buildListShell(type) {
+  const T = TYPES[type];
+  $('page-' + type).innerHTML = `
+    <div class="section-header">
+      <div>
+        <div class="section-title">List ${T.label}</div>
+        <div class="section-subtitle">${T.subtitle}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="exportListCSV('${type}')">⬇ Ekspor CSV</button>
+        <button class="btn btn-primary" onclick="goMutasi('in','new','${type}')">＋ Tambah ${T.label} Baru</button>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-value" id="${type}-st-total">0</div><div class="stat-label">Total Batch</div></div>
+      <div class="stat-card"><div class="stat-value warn" id="${type}-st-low">0</div><div class="stat-label">Stok Menipis</div></div>
+      <div class="stat-card"><div class="stat-value bad" id="${type}-st-empty">0</div><div class="stat-label">Stok Habis</div></div>
+      <div class="stat-card"><div class="stat-value warn" id="${type}-st-exp">0</div><div class="stat-label">ED ≤ 30 hari</div></div>
+    </div>
+    <div class="card">
+      <div class="toolbar">
+        <input class="search" type="search" id="${type}-search" placeholder="🔍 Cari nama, merk, BN, lokasi…" oninput="renderList('${type}')">
+        <select id="${type}-status" onchange="renderList('${type}')">
+          <option value="">Semua status</option>
+          <option value="normal">Normal</option>
+          <option value="low">Menipis</option>
+          <option value="empty">Habis</option>
+          <option value="exp">Segera / sudah kadaluarsa</option>
+        </select>
+      </div>
+      <div id="${type}-table"></div>
+    </div>`;
+}
+
+function renderList(type) {
+  const all = items.filter(i => i.type === type);
+  $(type + '-st-total').textContent = all.length;
+  $(type + '-st-low').textContent   = all.filter(i => itemStatus(i).includes('low')).length;
+  $(type + '-st-empty').textContent = all.filter(i => itemStatus(i).includes('empty')).length;
+  $(type + '-st-exp').textContent   = all.filter(i => itemStatus(i).includes('exp')).length;
+
+  const q = $(type + '-search').value.trim().toLowerCase(), st = $(type + '-status').value;
+  const list = all.filter(i => {
+    if (q && !`${i.name} ${i.brand} ${i.bn} ${i.location} ${i.code || ''}`.toLowerCase().includes(q)) return false;
+    if (st) {
+      const f = itemStatus(i);
+      if (st === 'normal' && f.length) return false;
+      if (st !== 'normal' && !f.includes(st)) return false;
+    }
+    return true;
+  }).sort((a, b) => a.name.localeCompare(b.name) || (a.expiry || '9999').localeCompare(b.expiry || '9999'));
+
+  const T = TYPES[type], box = $(type + '-table');
+  if (!all.length) {
+    box.innerHTML = `<div class="empty"><div class="big">${T.icon}</div>
+      <p>Belum ada data ${T.label.toLowerCase()}. Tambahkan batch pertama atau muat data contoh.</p>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="goMutasi('in','new','${type}')">＋ Tambah ${T.label} Baru</button>
+        <button class="btn" onclick="loadSample()">Muat Data Contoh</button>
+      </div></div>`;
+    return;
+  }
+  if (!list.length) { box.innerHTML = '<div class="empty"><div class="big">🔍</div><p>Tidak ada data yang cocok dengan filter.</p></div>'; return; }
+
+  box.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Nama</th><th>Merk</th><th>BN</th><th>ED</th><th>Tgl Datang</th><th class="num">Jumlah</th><th>Tgl Diambil</th><th>Status</th><th></th></tr></thead>
+    <tbody>${list.map(i => `<tr>
+      <td><div class="item-name">${esc(i.name)}</div><div class="item-sub">${i.code ? esc(i.code) + ' · ' : ''}${esc(i.location) || 'lokasi belum diisi'}</div></td>
+      <td>${dv(i.brand)}</td>
+      <td class="mono">${dv(i.bn)}</td>
+      <td class="mono">${expCell(i)}</td>
+      <td class="mono">${fmtDate(i.arrival)}</td>
+      <td class="num"><b>${fmtNum(i.qty)}</b> <span class="item-sub">${esc(i.unit)}</span>${i.min > 0 ? `<div class="item-sub">min ${fmtNum(i.min)}</div>` : ''}</td>
+      <td class="mono">${fmtDate(i.taken)}</td>
+      <td>${statusBadges(i)}</td>
+      <td><div class="actions">
+        <button class="btn btn-sm btn-icon" title="Tambah stok batch ini" onclick="goMutasi('in','existing','${type}','${i.id}')">＋</button>
+        <button class="btn btn-sm btn-icon" title="Potong stok batch ini" onclick="goMutasi('out','existing','${type}','${i.id}')">－</button>
+        <button class="btn btn-sm btn-icon" title="Edit data" onclick="openItemModal('${i.id}')">✏️</button>
+        <button class="btn btn-sm btn-icon btn-danger" title="Hapus" onclick="deleteItem('${i.id}')">🗑</button>
+      </div></td></tr>`).join('')}</tbody></table></div>
+    <div class="item-sub" style="margin-top:8px">Menampilkan ${list.length} dari ${all.length} batch</div>`;
+}
+
+function openItemModal(id) {
+  const it = items.find(i => i.id === id); if (!it) return;
+  editingId = id;
+  $('f-type').value = it.type; $('f-unit').value = it.unit || '';
+  $('f-name').value = it.name; $('f-brand').value = it.brand || ''; $('f-bn').value = it.bn || '';
+  $('f-exp').value = it.expiry || ''; $('f-arrival').value = it.arrival || ''; $('f-taken').value = it.taken || '';
+  $('f-min').value = it.min || 0; $('f-loc').value = it.location || '';
+  $('f-qty').value = `${fmtNum(it.qty)} ${it.unit || ''}`;
+  openModal('item-modal');
+  setTimeout(() => $('f-name').focus(), 50);
+}
+
+function saveItem() {
+  const it = items.find(i => i.id === editingId); if (!it) return;
+  const name = $('f-name').value.trim();
+  if (!name) { toast('Nama item wajib diisi'); return; }
+  const min = parseFloat($('f-min').value);
+  if (min < 0) { toast('Stok minimum tidak boleh negatif'); return; }
+  Object.assign(it, {
+    type: $('f-type').value, name, unit: $('f-unit').value.trim(),
+    brand: $('f-brand').value.trim(), bn: $('f-bn').value.trim(),
+    expiry: $('f-exp').value || '', arrival: $('f-arrival').value || '', taken: $('f-taken').value || '',
+    min: isNaN(min) ? 0 : min, location: $('f-loc').value.trim(), updatedAt: nowISO()
+  });
+  save(K_ITEMS, items);
+  closeModal('item-modal');
+  updateCounts();
+  PAGES.slice(0, 2).forEach(t => { if ($('page-' + t).classList.contains('active')) renderList(t); });
+  toast('Data batch diperbarui');
+}
+
+function deleteItem(id) {
+  const it = items.find(i => i.id === id);
+  if (!it || !confirm(`Hapus "${it.name}" (BN ${it.bn || '-'})?\nRiwayat transaksi & opname lama tidak ikut terhapus.`)) return;
+  items = items.filter(i => i.id !== id);
+  if (draft) { delete draft.counts[id]; delete draft.notes[id]; save(K_DRAFT, draft); }
+  save(K_ITEMS, items);
+  updateCounts(); renderList(it.type);
+  toast('Batch dihapus');
+}
+
+function exportListCSV(type) {
+  const list = items.filter(i => i.type === type);
+  if (!list.length) { toast('Belum ada data untuk diekspor'); return; }
+  const rows = [['Nama', 'Merk', 'BN', 'ED', 'Tanggal Datang', 'Jumlah', 'Satuan', 'Stok Minimum', 'Lokasi', 'Tanggal Diambil']];
+  list.forEach(i => rows.push([i.name, i.brand, i.bn, i.expiry, i.arrival, i.qty, i.unit, i.min, i.location, i.taken]));
+  downloadCSV(`list-${type}-${todayISO()}.csv`, rows);
+}
+
+function loadSample() {
+  const d = n => { const x = new Date(); x.setDate(x.getDate() + n); x.setMinutes(x.getMinutes() - x.getTimezoneOffset()); return x.toISOString().slice(0, 10); };
+  // [type, name, brand, bn, ED(hari), datang(hari), qty sekarang, satuan, min, lokasi, diambil(jumlah), diambil(hari lalu)]
+  const rows = [
+    ['reagen', 'Plate Count Agar (PCA)', 'Merck', 'VM1234567', 240, -60, 4, 'botol', 2, 'Lemari A1', 1, 12],
+    ['reagen', 'Potato Dextrose Agar (PDA)', 'Oxoid', 'OX2398', 120, -90, 1, 'botol', 2, 'Lemari A1', 2, 5],
+    ['reagen', 'Buffered Peptone Water', 'Himedia', 'HM2377', 20, -150, 3, 'botol', 2, 'Lemari A2', 0, 0],
+    ['reagen', 'Etanol 70%', 'Smart-Lab', 'E7011', 400, -30, 12, 'liter', 5, 'Lemari B1', 3, 2],
+    ['reagen', 'NaCl Fisiologis 0,85%', 'Otsuka', 'N0850', 300, -45, 0, 'liter', 3, 'Lemari B1', 4, 1],
+    ['consumable', 'Petri Dish Steril 90 mm', 'Onemed', 'P9001', 700, -20, 18, 'pak', 6, 'Rak C2', 2, 3],
+    ['consumable', 'Tip Pipet 1000 µL', 'Axygen', 'T1000', 500, -75, 7, 'box', 4, 'Rak C3', 1, 8],
+    ['consumable', 'Sarung Tangan Nitril M', 'Sensi', 'SG-221', -10, -200, 5, 'box', 3, 'Rak D1', 0, 0],
+  ];
+  rows.forEach(r => {
+    const [type, name, brand, bn, ed, arr, qty, unit, min, location, tkQty, tkAgo] = r;
+    const id = uid();
+    const initial = qty + tkQty;
+    const taken = tkQty ? d(-tkAgo) : '';
+    items.push({ id, type, name, brand, bn, expiry: d(ed), arrival: d(arr), qty, unit, min, location, taken, updatedAt: nowISO() });
+    const base = { itemId: id, type, name, brand, bn, expiry: d(ed), unit, officer: 'Contoh', supplier: '', purpose: '', ref: '' };
+    txs.push({ id: uid(), kind: 'in', ...base, qty: initial, before: 0, after: initial, date: d(arr), note: 'Data contoh — stok awal', createdAt: new Date(Date.now() - 86400000 * (-arr)).toISOString() });
+    if (tkQty) txs.push({ id: uid(), kind: 'out', ...base, qty: tkQty, before: initial, after: qty, date: taken, purpose: 'Analisis rutin', note: 'Data contoh', createdAt: new Date(Date.now() - 86400000 * tkAgo).toISOString() });
+  });
+  save(K_ITEMS, items); save(K_TX, txs);
+  updateCounts();
+  renderList('reagen'); renderList('consumable');
+  toast('Data contoh dimuat');
+}
+
+// ═══════════════════════════════════════════════════════════
+// TAMBAH / POTONG STOK
+// ═══════════════════════════════════════════════════════════
+function goMutasi(kind, mode, type, itemId) {
+  goPage('mutasi');
+  mutKind = kind;
+  if (type) $('m-type').value = type;
+  $('m-mode').value = mode === 'new' ? 'new' : 'existing';
+  syncMut();
+  if (itemId) { $('m-item').value = itemId; updatePreview(); $('m-qty').focus(); }
+  else if (mode === 'new') setTimeout(() => $('n-name').focus(), 50);
+}
+
+function initMutasi() {
+  if (!$('m-date').value) $('m-date').value = todayISO();
+  syncMut();
+  renderRecent();
+}
+
+function setKind(k) { mutKind = k; syncMut(); }
+const show = (id, on) => $(id).classList.toggle('hide', !on);
+
+function syncMut() {
+  const k = mutKind, isNew = k === 'in' && $('m-mode').value === 'new';
+  $('seg-in').className = k === 'in' ? 'on-in' : '';
+  $('seg-out').className = k === 'out' ? 'on-out' : '';
+  $('m-date-label').textContent = k === 'in' ? 'Tanggal datang *' : 'Tanggal diambil *';
+  $('m-ref-label').textContent = k === 'in' ? 'No. dokumen (SJ / PO)' : 'No. sampel / analisis (opsional)';
+  $('m-submit').textContent = k === 'in' ? 'Simpan Penambahan Stok' : 'Simpan Pemotongan Stok';
+  $('m-submit').className = 'btn ' + (k === 'in' ? 'btn-primary' : 'btn-danger');
+  show('grp-mode', k === 'in');
+  show('grp-existing', !isNew);
+  show('grp-new', isNew);
+  show('grp-supplier', k === 'in');
+  show('grp-purpose', k === 'out');
+  fillMutItems();
+  updatePreview();
+}
+
+function fillMutItems() {
+  const type = $('m-type').value, prev = $('m-item').value;
+  const list = items.filter(i => i.type === type && (mutKind === 'in' || i.qty > 0))
+    .sort((a, b) => (a.expiry || '9999').localeCompare(b.expiry || '9999') || a.name.localeCompare(b.name));
+  $('m-item').innerHTML = `<option value="">— pilih ${TYPES[type].label.toLowerCase()} —</option>` +
+    list.map(i => `<option value="${i.id}">${esc(batchLabel(i))}</option>`).join('');
+  $('m-item').value = list.some(i => i.id === prev) ? prev : '';
+  $('m-item-hint').textContent = list.length
+    ? 'Urut berdasarkan ED terdekat (FEFO) — ambil dari atas dulu.'
+    : `Belum ada ${mutKind === 'out' ? 'batch bersetok' : TYPES[type].label.toLowerCase()}.` + (mutKind === 'in' ? ' Pilih "Batch baru" untuk mendaftarkan.' : '');
+}
+
+function updatePreview() {
+  const isNew = mutKind === 'in' && $('m-mode').value === 'new';
+  const it = isNew ? null : items.find(i => i.id === $('m-item').value);
+  const info = $('m-info'), pv = $('m-preview');
+  if (it) {
+    info.classList.remove('hide');
+    info.innerHTML = `<div class="info-box">
+      <span>Merk: <b>${esc(it.brand) || '—'}</b></span><span>BN: <b>${esc(it.bn) || '—'}</b></span>
+      <span>ED: <b>${fmtDate(it.expiry)}</b></span><span>Tgl datang: <b>${fmtDate(it.arrival)}</b></span>
+      <span>Stok sekarang: <b>${fmtNum(it.qty)} ${esc(it.unit)}</b></span><span>Terakhir diambil: <b>${fmtDate(it.taken)}</b></span>
+    </div>`;
+  } else info.classList.add('hide');
+  $('m-unit-hint').textContent = (it ? it.unit : isNew ? $('n-unit').value : '') ? `(${it ? it.unit : $('n-unit').value})` : '';
+
+  const qty = parseFloat($('m-qty').value);
+  if (!isNaN(qty) && qty > 0 && (it || isNew)) {
+    const before = it ? it.qty : 0;
+    const after = mutKind === 'in' ? before + qty : before - qty;
+    const unit = it ? it.unit : $('n-unit').value;
+    pv.classList.remove('hide');
+    pv.classList.toggle('bad', after < 0);
+    pv.textContent = after < 0
+      ? `Jumlah melebihi stok (${fmtNum(before)} ${unit}) — tidak bisa dipotong`
+      : `Stok: ${fmtNum(before)} → ${fmtNum(after)} ${unit}`;
+  } else pv.classList.add('hide');
+}
+document.addEventListener('input', e => { if (e.target && e.target.id === 'n-unit') updatePreview(); });
+
+function submitMutasi() {
+  const date = $('m-date').value, officer = $('m-officer').value.trim();
+  const qty = parseFloat($('m-qty').value), note = $('m-note').value.trim(), ref = $('m-ref').value.trim();
+  if (!date) { toast('Tanggal wajib diisi'); return; }
+  if (!officer) { toast('Nama petugas wajib diisi'); return; }
+  if (isNaN(qty) || qty <= 0) { toast('Jumlah harus lebih dari 0'); return; }
+
+  let it, before;
+  const isNew = mutKind === 'in' && $('m-mode').value === 'new';
+
+  if (isNew) {
+    const name = $('n-name').value.trim(), unit = $('n-unit').value.trim();
+    if (!name) { toast('Nama item wajib diisi'); return; }
+    if (!unit) { toast('Satuan wajib diisi'); return; }
+    const brand = $('n-brand').value.trim(), bn = $('n-bn').value.trim(), type = $('m-type').value;
+    const dup = items.find(i => i.type === type && i.name.toLowerCase() === name.toLowerCase() &&
+      (i.brand || '').toLowerCase() === brand.toLowerCase() && (i.bn || '').toLowerCase() === bn.toLowerCase());
+    if (dup && !confirm('Batch dengan nama, merk, dan BN yang sama sudah ada.\nTetap buat batch baru? (Pilih Batal lalu gunakan "Tambah ke batch yang sudah ada")')) return;
+    const min = parseFloat($('n-min').value);
+    it = { id: uid(), type, name, brand, bn, expiry: $('n-exp').value || '', arrival: date, qty: 0, unit,
+           min: isNaN(min) ? 0 : min, location: $('n-loc').value.trim(), taken: '', updatedAt: nowISO() };
+    items.push(it);
+    before = 0;
+  } else {
+    it = items.find(i => i.id === $('m-item').value);
+    if (!it) { toast('Pilih item / batch terlebih dahulu'); return; }
+    before = it.qty;
+    if (mutKind === 'out' && qty > before) { toast(`Jumlah melebihi stok (${fmtNum(before)} ${it.unit})`); return; }
+  }
+
+  const after = mutKind === 'in' ? before + qty : before - qty;
+  it.qty = after; it.updatedAt = nowISO();
+  if (mutKind === 'out') it.taken = date;
+  else if (!it.arrival) it.arrival = date;
+
+  txs.unshift({
+    id: uid(), kind: mutKind, itemId: it.id, type: it.type, name: it.name, brand: it.brand, bn: it.bn,
+    expiry: it.expiry, unit: it.unit, qty, before, after, date, officer,
+    supplier: mutKind === 'in' ? $('m-supplier').value.trim() : '',
+    purpose: mutKind === 'out' ? $('m-purpose').value : '',
+    ref, note: isNew && !note ? 'Batch baru' : note, createdAt: nowISO()
+  });
+  save(K_ITEMS, items); save(K_TX, txs);
+  toast(mutKind === 'in' ? `Stok ditambah: ${it.name} +${fmtNum(qty)} ${it.unit}` : `Stok dipotong: ${it.name} −${fmtNum(qty)} ${it.unit}`);
+  resetMut(true);
+  updateCounts();
+  fillMutItems(); updatePreview(); renderRecent();
+}
+
+function resetMut(keepContext) {
+  ['m-qty', 'm-ref', 'm-note', 'm-supplier', 'n-name', 'n-brand', 'n-bn', 'n-exp', 'n-unit', 'n-loc'].forEach(id => $(id).value = '');
+  $('n-min').value = 0;
+  if (!keepContext) { $('m-item').value = ''; $('m-officer').value = ''; $('m-date').value = todayISO(); }
+  updatePreview();
+}
+
+function renderRecent() {
+  const box = $('m-recent');
+  if (!txs.length) { box.innerHTML = '<div class="empty" style="padding:1.5rem 0"><p>Belum ada transaksi.</p></div>'; return; }
+  box.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Item</th><th class="num">Jumlah</th></tr></thead><tbody>` +
+    [...txs].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 8).map(t => `<tr>
+      <td class="mono">${fmtDate(t.date)}</td>
+      <td><div class="item-name">${esc(t.name)}</div><div class="item-sub">${esc(t.brand) || '—'} · BN ${esc(t.bn) || '—'}</div></td>
+      <td class="num"><span class="${t.kind === 'in' ? 'qty-in' : 'qty-out'}">${t.kind === 'in' ? '+' : '−'}${fmtNum(t.qty)}</span> <span class="item-sub">${esc(t.unit)}</span></td></tr>`).join('') +
+    `</tbody></table></div><div style="margin-top:10px"><button class="btn btn-sm" onclick="histFilter='all';goPage('riwayat')">Lihat semua riwayat</button></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// STOCK OPNAME
+// ═══════════════════════════════════════════════════════════
+function updateDraftDot() { $('draft-dot').classList.toggle('on', !!draft); }
+const scopeLabel = s => s ? TYPES[s]?.label || s : 'Reagen & Consumable';
+
+function renderOpname() {
+  updateDraftDot();
+  const body = $('opname-body');
+
+  if (!items.length) {
+    body.innerHTML = `<div class="card"><div class="empty"><div class="big">📦</div>
+      <p>Belum ada data reagen / consumable. Tambahkan item terlebih dahulu sebelum melakukan opname.</p>
+      <button class="btn btn-primary" onclick="goPage('reagen')">Ke List Reagen</button></div></div>`;
+    return;
+  }
+
+  if (!draft) {
+    body.innerHTML = `<div class="card" style="max-width:640px">
+      <div class="card-title">Mulai Opname Baru</div>
+      <div class="card-subtitle">Isi informasi sesi, lalu hitung stok fisik tiap batch.</div>
+      <div class="form-grid">
+        <div class="field"><label>Tanggal opname</label><input type="date" id="o-date" value="${todayISO()}"></div>
+        <div class="field"><label>Petugas *</label><input id="o-officer" placeholder="Nama petugas"></div>
+        <div class="field full"><label>Cakupan</label>
+          <select id="o-scope"><option value="">Reagen &amp; Consumable</option><option value="reagen">Reagen saja</option><option value="consumable">Consumable saja</option></select></div>
+        <div class="field full"><label>Catatan</label><textarea id="o-note" placeholder="Opsional"></textarea></div>
+      </div>
+      <div style="margin-top:1.25rem"><button class="btn btn-primary" onclick="startOpname()">▶ Mulai Opname</button></div>
+    </div>`;
+    return;
+  }
+
+  const scope = scopeItems();
+  const counted = scope.filter(i => draft.counts[i.id] !== undefined && draft.counts[i.id] !== '').length;
+  const pct = scope.length ? Math.round(counted / scope.length * 100) : 0;
+
+  body.innerHTML = `<div class="card">
+    <div class="opname-head">
+      <div>
+        <div class="card-title">Sesi Opname Berjalan</div>
+        <div class="opname-meta">
+          <span>Tanggal: <b>${fmtDate(draft.date)}</b></span>
+          <span>Petugas: <b>${esc(draft.officer)}</b></span>
+          <span>Cakupan: <b>${esc(scopeLabel(draft.scope))}</b></span>
+          ${draft.note ? `<span>Catatan: <b>${esc(draft.note)}</b></span>` : ''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-danger" onclick="cancelOpname()">Batalkan</button>
+        <button class="btn btn-primary" onclick="openFinish()">✔ Selesaikan</button>
+      </div>
+    </div>
+    <div class="progress-label"><span>Progres hitung</span><span id="o-progress-text">${counted} / ${scope.length} batch (${pct}%)</span></div>
+    <div class="progress"><div id="o-progress-bar" style="width:${pct}%"></div></div>
+
+    <div class="toolbar" style="margin-top:1.25rem">
+      <input class="search" type="search" id="o-search" placeholder="🔍 Cari nama / merk / BN / lokasi…" oninput="filterOpnameRows()">
+      <select id="o-filter" onchange="filterOpnameRows()">
+        <option value="">Semua batch</option>
+        <option value="todo">Belum dihitung</option>
+        <option value="done">Sudah dihitung</option>
+        <option value="diff">Ada selisih</option>
+      </select>
+    </div>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th>Item</th><th>Merk</th><th>BN</th><th>ED</th><th>Lokasi</th><th class="num">Stok Sistem</th><th class="num">Stok Fisik</th><th class="num">Selisih</th><th>Keterangan</th></tr></thead>
+      <tbody>${scope.map(i => `<tr id="orow-${i.id}" data-search="${esc((i.name + ' ' + i.brand + ' ' + i.bn + ' ' + i.location).toLowerCase())}">
+        <td><div class="item-name">${esc(i.name)}</div><div class="item-sub">${TYPES[i.type].label}</div></td>
+        <td>${dv(i.brand)}</td>
+        <td class="mono">${dv(i.bn)}</td>
+        <td class="mono">${expCell(i)}</td>
+        <td>${dv(i.location)}</td>
+        <td class="num">${fmtNum(i.qty)} <span class="item-sub">${esc(i.unit)}</span></td>
+        <td class="num"><input class="count-input" type="number" min="0" step="any" id="cnt-${i.id}" value="${esc(draft.counts[i.id] ?? '')}" placeholder="—" oninput="onCount('${i.id}')"></td>
+        <td class="num" id="diff-${i.id}"></td>
+        <td><input type="text" id="nt-${i.id}" value="${esc(draft.notes[i.id] ?? '')}" placeholder="Opsional" style="min-width:140px" oninput="onNote('${i.id}')"></td>
+      </tr>`).join('')}</tbody></table></div>
+    <div class="item-sub" style="margin-top:8px">Progres tersimpan otomatis di perangkat ini. Batch yang dikosongkan dianggap tidak dihitung.</div>
+  </div>`;
+  scope.forEach(i => refreshRow(i.id));
+}
+
+function scopeItems() {
+  return items.filter(i => !draft.scope || i.type === draft.scope)
+    .sort((a, b) => (a.location || '').localeCompare(b.location || '') || a.name.localeCompare(b.name) || (a.expiry || '9999').localeCompare(b.expiry || '9999'));
+}
+
+function startOpname() {
+  const officer = $('o-officer').value.trim();
+  if (!officer) { toast('Nama petugas wajib diisi'); return; }
+  draft = { id: uid(), date: $('o-date').value || todayISO(), officer, note: $('o-note').value.trim(), scope: $('o-scope').value, counts: {}, notes: {}, startedAt: nowISO() };
+  save(K_DRAFT, draft);
+  renderOpname();
+}
+
+function cancelOpname() {
+  if (!confirm('Batalkan sesi opname ini? Semua hasil hitung yang belum disimpan akan hilang.')) return;
+  draft = null; try { localStorage.removeItem(K_DRAFT); } catch (e) {}
+  renderOpname();
+  toast('Sesi opname dibatalkan');
+}
+
+function onCount(id) {
+  const v = $('cnt-' + id).value;
+  if (v === '') delete draft.counts[id]; else draft.counts[id] = v;
+  save(K_DRAFT, draft);
+  refreshRow(id);
+  updateProgress();
+}
+function onNote(id) {
+  const v = $('nt-' + id).value;
+  if (v === '') delete draft.notes[id]; else draft.notes[id] = v;
+  save(K_DRAFT, draft);
+}
+
+function refreshRow(id) {
+  const it = items.find(i => i.id === id); if (!it) return;
+  const cell = $('diff-' + id), row = $('orow-' + id);
+  const v = draft.counts[id];
+  if (v === undefined || v === '') { cell.innerHTML = '<span class="diff-zero">—</span>'; row.classList.remove('counted'); return; }
+  const diff = parseFloat(v) - it.qty;
+  row.classList.add('counted');
+  const cls = diff > 0 ? 'diff-pos' : diff < 0 ? 'diff-neg' : 'diff-zero';
+  cell.innerHTML = `<span class="${cls}">${diff > 0 ? '+' : ''}${fmtNum(diff)}</span>`;
+}
+
+function updateProgress() {
+  const scope = scopeItems();
+  const counted = scope.filter(i => draft.counts[i.id] !== undefined).length;
+  const pct = scope.length ? Math.round(counted / scope.length * 100) : 0;
+  $('o-progress-text').textContent = `${counted} / ${scope.length} batch (${pct}%)`;
+  $('o-progress-bar').style.width = pct + '%';
+}
+
+function filterOpnameRows() {
+  const q = $('o-search').value.trim().toLowerCase(), f = $('o-filter').value;
+  scopeItems().forEach(i => {
+    const row = $('orow-' + i.id);
+    const has = draft.counts[i.id] !== undefined;
+    const diff = has ? parseFloat(draft.counts[i.id]) - i.qty : 0;
+    let show = !q || row.dataset.search.includes(q);
+    if (f === 'todo') show = show && !has;
+    if (f === 'done') show = show && has;
+    if (f === 'diff') show = show && has && diff !== 0;
+    row.style.display = show ? '' : 'none';
+  });
+}
+
+function buildLines() {
+  return scopeItems().filter(i => draft.counts[i.id] !== undefined).map(i => {
+    const physical = parseFloat(draft.counts[i.id]);
+    return { itemId: i.id, type: i.type, name: i.name, brand: i.brand, bn: i.bn, expiry: i.expiry, unit: i.unit, location: i.location,
+             system: i.qty, physical, diff: physical - i.qty, note: draft.notes[i.id] || '' };
+  });
+}
+
+function openFinish() {
+  const lines = buildLines();
+  if (!lines.length) { toast('Belum ada batch yang dihitung'); return; }
+  const scope = scopeItems();
+  const withDiff = lines.filter(l => l.diff !== 0).length;
+  const skipped = scope.length - lines.length;
+  $('finish-summary').innerHTML = `
+    <div class="summary-grid">
+      <div class="stat-card"><div class="stat-value">${lines.length}</div><div class="stat-label">Dihitung</div></div>
+      <div class="stat-card"><div class="stat-value ${withDiff ? 'warn' : ''}">${withDiff}</div><div class="stat-label">Ada Selisih</div></div>
+      <div class="stat-card"><div class="stat-value ${skipped ? 'warn' : ''}">${skipped}</div><div class="stat-label">Belum Dihitung</div></div>
+    </div>
+    ${skipped ? '<div class="item-sub">Batch yang belum dihitung tidak akan masuk ke laporan maupun diubah stoknya.</div>' : ''}`;
+  openModal('finish-modal');
+}
+
+function confirmFinish() {
+  const lines = buildLines();
+  const apply = $('apply-adjust').checked;
+  opnames.unshift({
+    id: draft.id, date: draft.date, officer: draft.officer, note: draft.note,
+    scope: draft.scope || '', applied: apply, finishedAt: nowISO(), lines
+  });
+  if (apply) {
+    lines.forEach(l => { const it = items.find(i => i.id === l.itemId); if (it) { it.qty = l.physical; it.updatedAt = nowISO(); } });
+    save(K_ITEMS, items);
+  }
+  save(K_OPN, opnames);
+  draft = null; try { localStorage.removeItem(K_DRAFT); } catch (e) {}
+  closeModal('finish-modal');
+  toast('Opname disimpan');
+  histFilter = 'opname';
+  goPage('riwayat');
+}
+
+// ═══════════════════════════════════════════════════════════
+// RIWAYAT  (tambah stok · potong stok · opname)
+// ═══════════════════════════════════════════════════════════
+function historyEvents() {
+  const ev = [
+    ...txs.map(t => ({ kind: t.kind, ts: t.createdAt, type: t.type, tx: t })),
+    ...opnames.map(o => ({
+      kind: 'opname', ts: o.finishedAt, o,
+      type: o.scope || ''   // cakupan; kosong = campuran
+    }))
+  ];
+  return ev.sort((a, b) => b.ts.localeCompare(a.ts));
+}
+
+const KIND_LABEL = { in: 'Tambah Stok', out: 'Potong Stok', opname: 'Opname' };
+const KIND_BADGE = { in: 'badge-green', out: 'badge-red', opname: 'badge-blue' };
+
+function setHistFilter(f) { histFilter = f; renderHistory(); }
+
+function filteredHistory() {
+  const q = ($('h-search')?.value || '').trim().toLowerCase(), ty = $('h-type')?.value || '';
+  return historyEvents().filter(e => {
+    if (histFilter !== 'all' && e.kind !== histFilter) return false;
+    if (ty) {
+      if (e.kind === 'opname') { if (e.o.scope && e.o.scope !== ty && !e.o.lines.some(l => l.type === ty)) return false; if (!e.o.scope && !e.o.lines.some(l => (l.type || '') === ty)) return false; }
+      else if (e.type !== ty) return false;
+    }
+    if (q) {
+      const hay = e.kind === 'opname'
+        ? `${e.o.officer} ${e.o.note} ${e.o.lines.map(l => `${l.name} ${l.brand || ''} ${l.bn || ''} ${l.code || ''}`).join(' ')}`
+        : `${e.tx.name} ${e.tx.brand} ${e.tx.bn} ${e.tx.officer} ${e.tx.supplier} ${e.tx.purpose} ${e.tx.ref} ${e.tx.note}`;
+      if (!hay.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function renderHistory() {
+  updateDraftDot();
+  const all = historyEvents();
+  const cnt = k => k === 'all' ? all.length : all.filter(e => e.kind === k).length;
+  $('h-chips').innerHTML = [['all', 'Semua'], ['in', 'Tambah stok'], ['out', 'Potong stok'], ['opname', 'Opname']]
+    .map(([k, l]) => `<button class="chip ${histFilter === k ? 'on' : ''}" onclick="setHistFilter('${k}')">${l}<span class="n">${cnt(k)}</span></button>`).join('');
+
+  const box = $('history-body');
+  if (!all.length) {
+    box.innerHTML = `<div class="empty"><div class="big">🕘</div><p>Belum ada riwayat. Transaksi tambah / potong stok dan hasil opname akan muncul di sini.</p>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn btn-primary" onclick="goPage('mutasi')">Tambah / Potong Stok</button><button class="btn" onclick="goPage('opname')">Mulai Opname</button></div></div>`;
+    return;
+  }
+  const list = filteredHistory();
+  if (!list.length) { box.innerHTML = '<div class="empty"><div class="big">🔍</div><p>Tidak ada riwayat yang cocok dengan filter.</p></div>'; return; }
+
+  box.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Waktu</th><th>Jenis</th><th>Item</th><th>Merk</th><th>BN</th><th class="num">Perubahan</th><th class="num">Stok</th><th>Petugas</th><th>Keterangan</th><th></th></tr></thead>
+    <tbody>${list.map(e => e.kind === 'opname' ? opnameRow(e.o) : txRow(e.tx)).join('')}</tbody></table></div>
+    <div class="item-sub" style="margin-top:8px">${list.length} aktivitas ditampilkan</div>`;
+}
+
+function txRow(t) {
+  const sign = t.kind === 'in' ? '+' : '−';
+  const parts = (t.kind === 'in' ? [t.supplier && 'Supplier: ' + t.supplier, t.ref && 'Dok: ' + t.ref] : [t.purpose, t.ref && 'Ref: ' + t.ref]).concat(t.note).filter(Boolean);
+  return `<tr>
+    <td class="mono">${fmtDate(t.date)}<div class="item-sub">${fmtDateTime(t.createdAt).split(',').pop().trim()}</div></td>
+    <td><span class="badge ${KIND_BADGE[t.kind]}">${KIND_LABEL[t.kind]}</span></td>
+    <td><div class="item-name">${esc(t.name)}</div><div class="item-sub">${TYPES[t.type]?.label || ''}</div></td>
+    <td>${dv(t.brand)}</td><td class="mono">${dv(t.bn)}</td>
+    <td class="num"><span class="${t.kind === 'in' ? 'qty-in' : 'qty-out'}">${sign}${fmtNum(t.qty)}</span> <span class="item-sub">${esc(t.unit)}</span></td>
+    <td class="num">${fmtNum(t.before)} → <b>${fmtNum(t.after)}</b></td>
+    <td>${dv(t.officer)}</td>
+    <td class="wrap">${parts.length ? esc(parts.join(' · ')) : '<span class="dim">—</span>'}</td>
+    <td></td></tr>`;
+}
+
+function opnameRow(o) {
+  const diffs = o.lines.filter(l => l.diff !== 0);
+  const plus = diffs.filter(l => l.diff > 0).length, minus = diffs.filter(l => l.diff < 0).length;
+  const ket = [o.note, o.applied ? 'Stok disesuaikan' : 'Stok tidak diubah'].filter(Boolean).join(' · ');
+  return `<tr>
+    <td class="mono">${fmtDate(o.date)}<div class="item-sub">${fmtDateTime(o.finishedAt).split(',').pop().trim()}</div></td>
+    <td><span class="badge ${KIND_BADGE.opname}">Opname</span></td>
+    <td colspan="3"><div class="item-name">Sesi opname — ${esc(scopeLabel(o.scope || o.category))}</div>
+      <div class="item-sub">${o.lines.length} batch dihitung</div></td>
+    <td class="num">${diffs.length ? `<span class="badge badge-amber">${diffs.length} selisih</span>` : '<span class="badge badge-green">Sesuai</span>'}
+      ${plus ? `<div class="item-sub diff-pos">${plus} lebih</div>` : ''}${minus ? `<div class="item-sub diff-neg">${minus} kurang</div>` : ''}</td>
+    <td class="num dim">—</td>
+    <td>${dv(o.officer)}</td>
+    <td class="wrap">${esc(ket)}</td>
+    <td><div class="actions">
+      <button class="btn btn-sm" id="hbtn-${o.id}" onclick="toggleDetail('${o.id}')">Detail</button>
+      <button class="btn btn-sm" onclick="exportOpnameCSV('${o.id}')">⬇ CSV</button>
+      <button class="btn btn-sm btn-danger" title="Hapus riwayat opname" onclick="deleteOpname('${o.id}')">🗑</button>
+    </div></td></tr>
+    <tr class="detail-row hide" id="hd-${o.id}"><td colspan="10">
+      <div class="table-wrap" style="background:var(--surface)"><table>
+        <thead><tr><th>Item</th><th>Merk</th><th>BN</th><th>ED</th><th class="num">Sistem</th><th class="num">Fisik</th><th class="num">Selisih</th><th>Keterangan</th></tr></thead>
+        <tbody>${o.lines.map(l => {
+          const cls = l.diff > 0 ? 'diff-pos' : l.diff < 0 ? 'diff-neg' : 'diff-zero';
+          return `<tr><td><div class="item-name">${esc(l.name)}</div>${l.code ? `<div class="item-sub">${esc(l.code)}</div>` : ''}</td>
+            <td>${dv(l.brand)}</td><td class="mono">${dv(l.bn)}</td><td class="mono">${fmtDate(l.expiry)}</td>
+            <td class="num">${fmtNum(l.system)} ${esc(l.unit)}</td><td class="num">${fmtNum(l.physical)} ${esc(l.unit)}</td>
+            <td class="num"><span class="${cls}">${l.diff > 0 ? '+' : ''}${fmtNum(l.diff)}</span></td><td>${esc(l.note)}</td></tr>`;
+        }).join('')}</tbody></table></div>
+    </td></tr>`;
+}
+
+function toggleDetail(id) {
+  const open = $('hd-' + id).classList.toggle('hide') === false;
+  $('hbtn-' + id).textContent = open ? 'Tutup' : 'Detail';
+}
+
+function exportHistoryCSV() {
+  const list = filteredHistory();
+  if (!list.length) { toast('Belum ada data untuk diekspor'); return; }
+  const rows = [['Tanggal', 'Waktu Catat', 'Jenis', 'Tipe', 'Nama', 'Merk', 'BN', 'ED', 'Satuan', 'Perubahan', 'Stok Sebelum / Sistem', 'Stok Sesudah / Fisik', 'Petugas', 'Keterangan']];
+  list.forEach(e => {
+    if (e.kind === 'opname') {
+      e.o.lines.forEach(l => rows.push([e.o.date, e.o.finishedAt, 'Opname', TYPES[l.type]?.label || '', l.name, l.brand, l.bn, l.expiry, l.unit, l.diff, l.system, l.physical, e.o.officer, [l.note, e.o.note].filter(Boolean).join(' | ')]));
+    } else {
+      const t = e.tx;
+      rows.push([t.date, t.createdAt, KIND_LABEL[t.kind], TYPES[t.type]?.label || '', t.name, t.brand, t.bn, t.expiry, t.unit, (t.kind === 'in' ? '+' : '-') + t.qty, t.before, t.after, t.officer,
+        [t.supplier, t.purpose, t.ref, t.note].filter(Boolean).join(' | ')]);
+    }
+  });
+  downloadCSV(`riwayat-stok-${todayISO()}.csv`, rows);
+}
+
+function exportOpnameCSV(id) {
+  const o = opnames.find(x => x.id === id); if (!o) return;
+  const rows = [['Nama', 'Jenis', 'Merk', 'BN', 'ED', 'Lokasi', 'Satuan', 'Stok Sistem', 'Stok Fisik', 'Selisih', 'Keterangan']];
+  o.lines.forEach(l => rows.push([l.name, TYPES[l.type]?.label || l.category || '', l.brand, l.bn, l.expiry, l.location, l.unit, l.system, l.physical, l.diff, l.note]));
+  downloadCSV(`opname-${o.date}-${o.id.slice(0, 5)}.csv`, rows);
+}
+
+function deleteOpname(id) {
+  if (!confirm('Hapus riwayat opname ini? Stok saat ini tidak akan berubah.')) return;
+  opnames = opnames.filter(o => o.id !== id);
+  save(K_OPN, opnames);
+  renderHistory();
+  toast('Riwayat opname dihapus');
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') ['item-modal', 'finish-modal'].forEach(closeModal);
+  if (e.key === 'Enter' && $('item-modal').classList.contains('open') && e.target.tagName === 'INPUT') saveItem();
+});
+(function init() {
+  buildListShell('reagen'); buildListShell('consumable');
+  let h = location.hash.replace('#', '');
+  if (h === 'inventory') h = 'reagen';
+  if (h === 'history') h = 'riwayat';
+  goPage(PAGES.includes(h) ? h : 'reagen');
+})();
+</script>
+</body>
+</html>

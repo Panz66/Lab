@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedule — iLaboratories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F2EE; --surface: #FDFCFA; --surface2: #F0EDE8;
+    --border: #DDD9D0; --border-strong: #C5C0B5;
+    --text: #1A1815; --text2: #5C5850; --text3: #9A9489;
+    --accent: #2D6A4F; --accent-light: #E8F5EE; --accent-dark: #1B4332;
+    --amber: #92400E; --amber-light: #FEF3C7;
+    --red: #991B1B; --red-light: #FEE2E2;
+    --blue: #1E40AF; --blue-light: #DBEAFE;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+    --radius: 10px; --radius-sm: 6px; --radius-lg: 16px;
+    --font-body: 'Outfit', sans-serif;
+    --font-display: 'Fraunces', serif;
+    --font-mono: 'DM Mono', monospace;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  [data-theme="dark"] {
+    --bg: #0F1008; --surface: #191A10; --surface2: #22231A;
+    --border: #2E2F24; --border-strong: #3E3F32;
+    --text: #F2F0E8; --text2: #A8A598; --text3: #6B6960;
+    --accent: #52B788; --accent-light: #0D2B1E; --accent-dark: #74C69D;
+    --amber: #FCD34D; --amber-light: #2D1F04;
+    --red: #F87171; --red-light: #2D0A0A;
+    --blue: #93C5FD; --blue-light: #0A1A3A;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+
+  /* TOPBAR */
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; gap: 1rem; height: 60px; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+  .back-link { display: flex; align-items: center; gap: 6px; color: var(--text3); text-decoration: none; font-size: 13px; font-weight: 500; padding: 6px 10px; border-radius: var(--radius-sm); transition: var(--transition); white-space: nowrap; }
+  .back-link:hover { background: var(--surface2); color: var(--text); }
+  .divider-v { width: 1px; height: 24px; background: var(--border); }
+  .logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 600; color: var(--accent); letter-spacing: -0.02em; white-space: nowrap; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .logo span { color: var(--text3); font-weight: 300; font-size: 1rem; font-style: italic; }
+  .spacer { flex: 1; }
+  .theme-toggle { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; cursor: pointer; font-size: 14px; font-family: var(--font-body); color: var(--text2); display: flex; align-items: center; gap: 6px; transition: var(--transition); white-space: nowrap; }
+  .theme-toggle:hover { border-color: var(--border-strong); }
+
+  /* TABS */
+  .tabs-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; gap: 0.25rem; overflow-x: auto; }
+  .tab-btn { padding: 12px 16px; border: none; background: transparent; color: var(--text2); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent; transition: var(--transition); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+  .tab-btn:hover { color: var(--text); background: var(--surface2); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); display: none; }
+  .tab-dot.on { display: inline-block; }
+
+  .main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+  .section-title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+  .section-subtitle { font-size: 14px; color: var(--text3); font-style: italic; margin-top: 2px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow); }
+  .card-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+  .card-subtitle { font-size: 12.5px; color: var(--text3); margin-bottom: 1rem; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; text-align: center; }
+  .stat-value { font-family: var(--font-mono); font-size: 1.9rem; font-weight: 500; color: var(--accent); line-height: 1; margin-bottom: 6px; }
+  .stat-value.warn { color: var(--amber); }
+  .stat-value.bad { color: var(--red); }
+  .stat-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+
+  .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 12px; font-weight: 500; gap: 4px; white-space: nowrap; }
+  .badge-green { background: var(--accent-light); color: var(--accent); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-gray { background: var(--surface2); color: var(--text2); }
+
+  /* BUTTONS */
+  .btn { padding: 9px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 500; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+  .btn:hover { background: var(--surface2); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn-danger { background: var(--red-light); border-color: transparent; color: var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-sm { padding: 5px 10px; font-size: 12.5px; }
+  .btn-icon { padding: 5px 8px; font-size: 13px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* FORM */
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 12.5px; font-weight: 500; color: var(--text2); }
+  input, select, textarea { font-family: var(--font-body); font-size: 14px; padding: 8px 11px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); transition: var(--transition); width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+  textarea { resize: vertical; min-height: 60px; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .form-grid .full { grid-column: 1 / -1; }
+
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+  .toolbar .search { flex: 1; min-width: 200px; }
+  .toolbar select { width: auto; min-width: 150px; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; padding: 10px 12px; background: var(--surface2); color: var(--text2); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  .mono { font-family: var(--font-mono); }
+  .num { text-align: right; font-family: var(--font-mono); }
+  .item-name { font-weight: 600; }
+  .item-sub { font-size: 12px; color: var(--text3); }
+  .actions { display: flex; gap: 4px; justify-content: flex-end; }
+  .count-input { width: 100px; text-align: right; font-family: var(--font-mono); }
+  .diff-pos { color: var(--accent); font-weight: 600; }
+  .diff-neg { color: var(--red); font-weight: 600; }
+  .diff-zero { color: var(--text3); }
+  tr.counted td { background: var(--accent-light); }
+  tr.counted:hover td { background: var(--accent-light); }
+
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); }
+  .empty .big { font-size: 2.5rem; margin-bottom: 8px; }
+  .empty p { margin-bottom: 14px; font-size: 14px; }
+
+  /* PROGRESS */
+  .progress { height: 8px; background: var(--surface2); border-radius: 8px; overflow: hidden; }
+  .progress > div { height: 100%; background: var(--accent); transition: width 0.3s; }
+  .opname-head { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+  .opname-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 13px; color: var(--text2); margin-top: 4px; }
+  .opname-meta b { color: var(--text); }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--text2); margin: 14px 0 6px; font-family: var(--font-mono); }
+
+  /* HISTORY */
+  .hist-card { margin-bottom: 1rem; padding: 1.25rem 1.5rem; }
+  .hist-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+  .hist-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; }
+  .hist-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .hist-detail { margin-top: 1rem; display: none; }
+  .hist-detail.open { display: block; }
+
+  /* MODAL */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; z-index: 500; padding: 1rem; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; padding: 1.5rem; border: 1px solid var(--border); }
+  .modal h3 { font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+  .check-row { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; margin-top: 12px; }
+  .check-row input { width: auto; margin-top: 4px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+  .summary-grid .stat-card { padding: 0.8rem; }
+  .summary-grid .stat-value { font-size: 1.5rem; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: var(--radius-sm); font-size: 14px; box-shadow: var(--shadow-md); z-index: 600; opacity: 0; transform: translateY(10px); transition: var(--transition); pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  footer.page-footer { text-align: center; padding: 2rem 0 1rem; font-size: 12.5px; color: var(--text3); }
+
+  @media (max-width: 720px) {
+    .topbar, .tabs-bar { padding-left: 1rem; padding-right: 1rem; }
+    .main { padding: 1.25rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .opname-head { grid-template-columns: 1fr; }
+    .back-link span { display: none; }
+    .logo span { display: none; }
+  }
+
+  /* ===== TAMBAHAN: modul reagen / consumable / mutasi / riwayat ===== */
+  .tab-btn .tab-count { background: var(--surface2); color: var(--text3); border-radius: 10px; padding: 0 7px; font-size: 11.5px; font-family: var(--font-mono); }
+  .tab-btn.active .tab-count { background: var(--accent-light); color: var(--accent); }
+  .hide { display: none !important; }
+  .seg { display: inline-flex; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); }
+  .seg button { border: none; background: transparent; padding: 9px 18px; font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--text2); cursor: pointer; transition: var(--transition); }
+  .seg button + button { border-left: 1px solid var(--border-strong); }
+  .seg button:hover { background: var(--surface2); }
+  .seg button.on-in { background: var(--accent); color: #fff; }
+  .seg button.on-out { background: var(--red); color: #fff; }
+  [data-theme="dark"] .seg button.on-out { color: #1a0505; }
+  .seg button.on { background: var(--accent); color: #fff; }
+  .mut-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+  .form-section { border-top: 1px dashed var(--border-strong); margin-top: 16px; padding-top: 14px; }
+  .form-section-title { font-size: 12.5px; font-weight: 600; color: var(--text2); margin-bottom: 10px; }
+  .info-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; color: var(--text2); display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 14px; }
+  .info-box b { color: var(--text); font-weight: 600; }
+  .info-box .full { grid-column: 1 / -1; }
+  .preview { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--accent-light); color: var(--accent); font-family: var(--font-mono); font-size: 13.5px; }
+  .preview.bad { background: var(--red-light); color: var(--red); }
+  .hint { font-size: 12px; color: var(--text3); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .chip { border: 1px solid var(--border-strong); background: var(--surface); color: var(--text2); border-radius: 20px; padding: 5px 14px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+  .chip:hover { background: var(--surface2); }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip .n { font-family: var(--font-mono); opacity: .75; margin-left: 4px; }
+  .qty-in { color: var(--accent); font-weight: 600; }
+  .qty-out { color: var(--red); font-weight: 600; }
+  tr.detail-row td { background: var(--surface2); padding: 12px; }
+  tr.detail-row:hover td { background: var(--surface2); }
+  td.wrap { white-space: normal; min-width: 160px; }
+  .dim { color: var(--text3); }
+  .exp-bad { color: var(--red); font-weight: 600; }
+  .exp-warn { color: var(--amber); font-weight: 600; }
+  @media (max-width: 960px) { .mut-layout { grid-template-columns: 1fr; } }
+
+  /* ===== TAMBAHAN: modul schedule ===== */
+  .tab-btn .tab-count { background: var(--surface2); color: var(--text3); border-radius: 10px; padding: 0 7px; font-size: 11.5px; font-family: var(--font-mono); }
+  .tab-btn.active .tab-count { background: var(--accent-light); color: var(--accent); }
+  .hide { display: none !important; }
+  .hint { font-size: 12px; color: var(--text3); }
+  .dim { color: var(--text3); }
+  .tag { display: inline-block; padding: 2px 8px; margin: 0 4px 3px 0; border-radius: 6px; background: var(--blue-light); color: var(--blue); font-family: var(--font-mono); font-size: 12px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { border: 1px solid var(--border-strong); background: var(--surface); color: var(--text2); border-radius: 20px; padding: 5px 14px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+  .chip:hover { background: var(--surface2); }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .inst-group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .inst-group > .hint { width: 48px; }
+  .form-section { border-top: 1px dashed var(--border-strong); margin-top: 16px; padding-top: 14px; }
+  .form-section-title { font-size: 12.5px; font-weight: 600; color: var(--text2); margin-bottom: 10px; }
+  .mut-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+  @media (max-width: 960px) { .mut-layout { grid-template-columns: 1fr; } }
+  .warn-box { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--amber-light); color: var(--amber); font-size: 13px; }
+  tr.day-row td { background: var(--surface2); font-weight: 600; font-size: 12.5px; color: var(--text2); padding: 7px 12px; }
+  tr.day-row:hover td { background: var(--surface2); }
+  .recent-item { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+  .recent-item:last-child { border-bottom: none; }
+  .week-nav { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+  .cell-book { font-size: 12px; background: var(--accent-light); color: var(--accent); border-radius: 6px; padding: 3px 7px; margin-bottom: 4px; }
+  .cell-book.conflict { background: var(--red-light); color: var(--red); }
+  td.today-col, th.today-col { box-shadow: inset 0 -2px 0 var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="back-link" href="ilaboratories.html" title="Kembali ke Dashboard">← <span>iLaboratories</span></a>
+  <div class="divider-v"></div>
+  <a class="logo" href="schedule.html">🗓️ Schedule <span>jadwal analisa lab</span></a>
+  <div class="spacer"></div>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌙</span>
+    <span id="theme-label">Dark</span>
+  </button>
+</header>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <button class="tab-btn active" id="tab-jadwal" onclick="goPage('jadwal')">🗓️ Jadwal Analisa <span class="tab-count" id="cnt-jadwal">0</span></button>
+  <button class="tab-btn" id="tab-input" onclick="goPage('input')">＋ Input Jadwal</button>
+  <button class="tab-btn" id="tab-alat" onclick="goPage('alat')">🧰 Pemakaian Alat</button>
+</div>
+
+<main class="main">
+
+  <!-- ═════════ JADWAL ═════════ -->
+  <section class="page active" id="page-jadwal">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Jadwal Analisa</div>
+        <div class="section-subtitle">Jadwal analisa, alat yang dipakai, jumlah sampel, analis, dan PIC</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="exportCSV()">⬇ Ekspor CSV</button>
+        <button class="btn btn-primary" onclick="newSchedule()">＋ Input Jadwal</button>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-value" id="st-today">0</div><div class="stat-label">Jadwal Hari Ini</div></div>
+      <div class="stat-card"><div class="stat-value" id="st-week">0</div><div class="stat-label">Jadwal Minggu Ini</div></div>
+      <div class="stat-card"><div class="stat-value warn" id="st-run">0</div><div class="stat-label">Sedang Berjalan</div></div>
+      <div class="stat-card"><div class="stat-value" id="st-samples">0</div><div class="stat-label">Total Sampel (Filter)</div></div>
+    </div>
+
+    <div class="card">
+      <div class="toolbar">
+        <input class="search" type="search" id="f-q" placeholder="🔍 Cari sampel, analisa, alat, analis, PIC…" oninput="renderList()">
+        <select id="f-range" onchange="renderList()">
+          <option value="all">Semua tanggal</option>
+          <option value="today">Hari ini</option>
+          <option value="week" selected>Minggu ini</option>
+          <option value="month">Bulan ini</option>
+        </select>
+        <select id="f-lab" onchange="renderList()"><option value="">Semua bagian</option></select>
+        <select id="f-status" onchange="renderList()"><option value="">Semua status</option></select>
+      </div>
+      <div id="list-table"></div>
+    </div>
+  </section>
+
+  <!-- ═════════ INPUT ═════════ -->
+  <section class="page" id="page-input">
+    <div class="section-header">
+      <div>
+        <div class="section-title" id="in-title">Input Jadwal</div>
+        <div class="section-subtitle">Diisi oleh PIC — pilih alat yang dipakai dan cek bentrok jadwal</div>
+      </div>
+    </div>
+
+    <div class="mut-layout">
+      <div class="card">
+        <div class="form-grid">
+          <div class="field"><label>Tanggal analisa *</label><input id="i-date" type="date" onchange="checkConflict()"></div>
+          <div class="form-grid" style="gap:8px">
+            <div class="field"><label>Mulai</label><input id="i-start" type="time" value="08:00" onchange="checkConflict()"></div>
+            <div class="field"><label>Selesai</label><input id="i-end" type="time" value="12:00" onchange="checkConflict()"></div>
+          </div>
+          <div class="field"><label>Bagian lab *</label><select id="i-lab"></select></div>
+          <div class="field"><label>Jenis analisa *</label><input id="i-analysis" placeholder="mis. Assay, Disolusi, TPC, Sterilitas"></div>
+          <div class="field"><label>Nama sampel / No. batch *</label><input id="i-sample" placeholder="mis. Paracetamol 500 mg — B2410A"></div>
+          <div class="field"><label>Jumlah sampel *</label><input id="i-count" type="number" min="1" step="1" value="1"></div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Alat yang dipakai</div>
+          <div id="i-inst"></div>
+          <div class="hint">Klik untuk memilih; bisa lebih dari satu (mis. HPLC 2 + LAF 1 + BSC 1).</div>
+          <div class="warn-box hide" id="i-warn"></div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Penanggung jawab</div>
+          <div class="form-grid">
+            <div class="field"><label>Analis *</label><input id="i-analyst" list="dl-analyst" placeholder="Nama analis"></div>
+            <div class="field"><label>PIC *</label><input id="i-pic" list="dl-pic" placeholder="Nama PIC"></div>
+            <div class="field"><label>Status</label><select id="i-status"></select></div>
+            <div class="field"><label>Catatan</label><input id="i-notes" placeholder="Opsional"></div>
+          </div>
+          <datalist id="dl-analyst"></datalist><datalist id="dl-pic"></datalist>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap">
+          <button class="btn btn-primary" id="i-submit" onclick="submitSchedule()">Simpan Jadwal</button>
+          <button class="btn" onclick="resetForm()">Bersihkan</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Jadwal terbaru</div>
+        <div class="card-subtitle">6 jadwal yang terakhir diinput</div>
+        <div id="i-recent"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ PEMAKAIAN ALAT ═════════ -->
+  <section class="page" id="page-alat">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Pemakaian Alat</div>
+        <div class="section-subtitle">Ketersediaan HPLC, LAF, BSC, dan alat lain per minggu</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="week-nav">
+        <button class="btn btn-sm" onclick="shiftWeek(-1)">← Minggu lalu</button>
+        <button class="btn btn-sm" onclick="shiftWeek(0)">Minggu ini</button>
+        <button class="btn btn-sm" onclick="shiftWeek(1)">Minggu depan →</button>
+        <span class="hint mono" id="week-label"></span>
+      </div>
+      <div id="alat-table"></div>
+    </div>
+  </section>
+
+  <footer class="page-footer">iLaboratories · Modul Schedule</footer>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ THEME (selaras dengan portal — key: mc-theme) ═══
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  applyThemeLabel(next);
+  try { localStorage.setItem('mc-theme', next); } catch (e) {}
+}
+function applyThemeLabel(t) {
+  document.getElementById('theme-icon').textContent = t === 'dark' ? '☀️' : '🌙';
+  document.getElementById('theme-label').textContent = t === 'dark' ? 'Light' : 'Dark';
+}
+(function initTheme() {
+  let saved = 'light';
+  try { saved = localStorage.getItem('mc-theme') || 'light'; } catch (e) {}
+  document.documentElement.setAttribute('data-theme', saved);
+  applyThemeLabel(saved);
+})();
+
+// ═══ KONFIGURASI — ubah daftar alat / bagian / status di sini ═══
+const INSTRUMENTS = {
+  HPLC: ['HPLC 1', 'HPLC 2', 'HPLC 3', 'HPLC 4'],
+  LAF:  ['LAF 1', 'LAF 2', 'LAF 3'],
+  BSC:  ['BSC 1', 'BSC 2'],
+  GC:   ['GC 1', 'GC 2'],
+  Lain: ['UV-Vis', 'Inkubator', 'Autoclave', 'Disolusi Tester']
+};
+const LABS = ['Mikrobiologi', 'Kimia', 'Fisika'];
+const STATUSES = { Terjadwal: 'badge-blue', Berjalan: 'badge-amber', Selesai: 'badge-green', Ditunda: 'badge-red' };
+const ALL_INST = Object.values(INSTRUMENTS).flat();
+
+// ═══ STORAGE ═══
+// Jadwal: {id, date, start, end, lab, analysis, sample, count, instruments[], analyst, pic, status, notes, createdAt}
+const K_SCHED = 'ilab-schedules';
+function load(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+}
+function save(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); }
+  catch (e) { toast('Gagal menyimpan data (penyimpanan penuh / diblokir)'); }
+}
+let items = load(K_SCHED, []);
+let editingId = null, selInst = [], weekOffset = 0;
+
+// ═══ HELPER ═══
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const isoDate = d => new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+const fmtDay = s => new Date(s + 'T00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 's' + Date.now() + Math.random().toString(16).slice(2));
+let toastTimer;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function downloadCSV(filename, rows) {
+  const csv = rows.map(r => r.map(c => {
+    let v = String(c ?? '');
+    if (/^[=+\-@]/.test(v)) v = "'" + v;
+    return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  }).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = filename; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function weekStart(offset = 0) {
+  const d = new Date(); d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + offset * 7); return d;
+}
+function inRange(date, range) {
+  if (range === 'all') return true;
+  const today = isoDate(new Date());
+  if (range === 'today') return date === today;
+  if (range === 'month') return date.slice(0, 7) === today.slice(0, 7);
+  const mon = weekStart(), sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  return date >= isoDate(mon) && date <= isoDate(sun);
+}
+const overlap = (a, b) => a.date === b.date && a.start < b.end && a.end > b.start;
+
+// ═══ NAVIGASI ═══
+const PAGES = ['jadwal', 'input', 'alat'];
+function goPage(name) {
+  if (!PAGES.includes(name)) name = 'jadwal';
+  if (name !== 'input' && editingId) resetForm();
+  PAGES.forEach(p => { $('page-' + p).classList.toggle('active', p === name); $('tab-' + p).classList.toggle('active', p === name); });
+  $('cnt-jadwal').textContent = items.length;
+  if (name === 'jadwal') renderList();
+  if (name === 'input') initForm();
+  if (name === 'alat') renderAlat();
+  history.replaceState(null, '', '#' + name);
+  window.scrollTo(0, 0);
+}
+function newSchedule() { resetForm(); goPage('input'); }
+
+// ═══ LIST ═══
+function renderList() {
+  $('st-today').textContent = items.filter(x => inRange(x.date, 'today')).length;
+  $('st-week').textContent  = items.filter(x => inRange(x.date, 'week')).length;
+  $('st-run').textContent   = items.filter(x => x.status === 'Berjalan').length;
+
+  const q = $('f-q').value.trim().toLowerCase(), r = $('f-range').value, lab = $('f-lab').value, st = $('f-status').value;
+  const list = items.filter(x => inRange(x.date, r) && (!lab || x.lab === lab) && (!st || x.status === st) &&
+    (!q || `${x.sample} ${x.analysis} ${x.analyst} ${x.pic} ${x.instruments.join(' ')} ${x.notes}`.toLowerCase().includes(q)))
+    .sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
+  $('st-samples').textContent = list.reduce((s, x) => s + Number(x.count || 0), 0);
+  $('cnt-jadwal').textContent = items.length;
+
+  const box = $('list-table');
+  if (!items.length) {
+    box.innerHTML = `<div class="empty"><div class="big">🗓️</div>
+      <p>Belum ada jadwal analisa. PIC dapat mulai mengisi jadwal pertama.</p>
+      <button class="btn btn-primary" onclick="newSchedule()">＋ Input Jadwal</button></div>`;
+    return;
+  }
+  if (!list.length) { box.innerHTML = `<div class="empty"><div class="big">🔍</div><p>Tidak ada jadwal yang cocok dengan filter.</p></div>`; return; }
+
+  let rows = '', last = '';
+  list.forEach(x => {
+    if (x.date !== last) { last = x.date; rows += `<tr class="day-row"><td colspan="8">${fmtDay(x.date)}</td></tr>`; }
+    rows += `<tr>
+      <td class="mono" style="white-space:nowrap">${esc(x.start)}–${esc(x.end)}</td>
+      <td><div class="item-name">${esc(x.analysis)}</div><div class="item-sub">${esc(x.lab)}${x.notes ? ' · ' + esc(x.notes) : ''}</div></td>
+      <td>${x.instruments.map(i => `<span class="tag">${esc(i)}</span>`).join('') || '<span class="dim">—</span>'}</td>
+      <td><div class="item-name">${esc(x.sample)}</div><div class="item-sub">${esc(x.count)} sampel</div></td>
+      <td>${esc(x.analyst)}</td><td>${esc(x.pic)}</td>
+      <td><span class="badge ${STATUSES[x.status] || 'badge-gray'}">${esc(x.status)}</span></td>
+      <td><div class="actions"><button class="btn btn-sm btn-icon" onclick="editSchedule('${x.id}')" title="Ubah">✏️</button><button class="btn btn-sm btn-icon btn-danger" onclick="delSchedule('${x.id}')" title="Hapus">🗑️</button></div></td></tr>`;
+  });
+  box.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Waktu</th><th>Analisa</th><th>Alat</th><th>Sampel</th><th>Analis</th><th>PIC</th><th>Status</th><th></th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+// ═══ FORM ═══
+function buildForm() {
+  $('i-lab').innerHTML = LABS.map(l => `<option>${l}</option>`).join('');
+  $('i-status').innerHTML = Object.keys(STATUSES).map(l => `<option>${l}</option>`).join('');
+  $('f-lab').innerHTML += LABS.map(l => `<option>${l}</option>`).join('');
+  $('f-status').innerHTML += Object.keys(STATUSES).map(l => `<option>${l}</option>`).join('');
+  $('i-inst').innerHTML = Object.entries(INSTRUMENTS).map(([g, arr]) =>
+    `<div class="inst-group"><span class="hint">${g}</span>${arr.map(n => `<button type="button" class="chip" data-inst="${n}" onclick="toggleInst('${n}')">${n}</button>`).join('')}</div>`).join('');
+}
+function toggleInst(n) {
+  selInst = selInst.includes(n) ? selInst.filter(i => i !== n) : [...selInst, n];
+  syncChips(); checkConflict();
+}
+function syncChips() { document.querySelectorAll('#i-inst .chip').forEach(c => c.classList.toggle('on', selInst.includes(c.dataset.inst))); }
+function checkConflict() {
+  const cur = { date: $('i-date').value, start: $('i-start').value, end: $('i-end').value }, msgs = [];
+  if (cur.date && cur.start && cur.end) items.forEach(x => {
+    if (x.id === editingId || x.status === 'Selesai' || x.status === 'Ditunda' || !overlap(cur, x)) return;
+    const common = x.instruments.filter(i => selInst.includes(i));
+    if (common.length) msgs.push(`${common.join(', ')} sudah dipakai ${x.start}–${x.end} (${esc(x.analysis)}, PIC ${esc(x.pic)})`);
+  });
+  const w = $('i-warn'); w.classList.toggle('hide', !msgs.length);
+  w.innerHTML = msgs.length ? '⚠️ Bentrok jadwal alat:<br>' + msgs.join('<br>') : '';
+}
+function initForm() {
+  if (!$('i-date').value) $('i-date').value = isoDate(new Date());
+  ['analyst', 'pic'].forEach(k => $('dl-' + k).innerHTML = [...new Set(items.map(x => x[k]))].map(v => `<option value="${esc(v)}">`).join(''));
+  syncChips(); checkConflict(); renderRecent();
+}
+function resetForm() {
+  editingId = null; selInst = [];
+  $('i-date').value = isoDate(new Date()); $('i-start').value = '08:00'; $('i-end').value = '12:00';
+  ['analysis', 'sample', 'analyst', 'pic', 'notes'].forEach(k => $('i-' + k).value = '');
+  $('i-count').value = 1; $('i-lab').value = LABS[0]; $('i-status').value = 'Terjadwal';
+  $('in-title').textContent = 'Input Jadwal'; $('i-submit').textContent = 'Simpan Jadwal';
+  syncChips(); checkConflict();
+}
+function editSchedule(id) {
+  const x = items.find(i => i.id === id); if (!x) return;
+  editingId = id; selInst = [...x.instruments];
+  ['date', 'start', 'end', 'lab', 'analysis', 'sample', 'count', 'analyst', 'pic', 'status', 'notes'].forEach(k => $('i-' + k).value = x[k]);
+  $('in-title').textContent = 'Ubah Jadwal'; $('i-submit').textContent = 'Simpan Perubahan';
+  PAGES.forEach(p => { $('page-' + p).classList.toggle('active', p === 'input'); $('tab-' + p).classList.toggle('active', p === 'input'); });
+  initForm(); window.scrollTo(0, 0);
+}
+function submitSchedule() {
+  const x = { id: editingId || uid(), instruments: [...selInst] };
+  ['date', 'start', 'end', 'lab', 'analysis', 'sample', 'count', 'analyst', 'pic', 'status', 'notes'].forEach(k => x[k] = $('i-' + k).value.trim());
+  const need = { date: 'tanggal', analysis: 'jenis analisa', sample: 'nama sampel', analyst: 'analis', pic: 'PIC' };
+  const miss = Object.keys(need).filter(k => !x[k]);
+  if (miss.length) return toast('Lengkapi dulu: ' + miss.map(k => need[k]).join(', '));
+  if (x.end <= x.start) return toast('Jam selesai harus setelah jam mulai');
+  x.count = Number(x.count);
+  if (!(x.count >= 1)) return toast('Jumlah sampel minimal 1');
+  if (editingId) items = items.map(i => i.id === editingId ? { ...i, ...x } : i);
+  else { x.createdAt = new Date().toISOString(); items.push(x); }
+  save(K_SCHED, items);
+  const wasEdit = !!editingId;
+  resetForm(); toast(wasEdit ? 'Jadwal diperbarui' : 'Jadwal disimpan');
+  if (wasEdit) goPage('jadwal'); else initForm();
+}
+function delSchedule(id) {
+  const x = items.find(i => i.id === id);
+  if (!x || !confirm(`Hapus jadwal "${x.analysis} — ${x.sample}"?`)) return;
+  items = items.filter(i => i.id !== id); save(K_SCHED, items); renderList(); toast('Jadwal dihapus');
+}
+function renderRecent() {
+  const r = [...items].sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')).slice(0, 6);
+  $('i-recent').innerHTML = r.length ? r.map(x => `<div class="recent-item">
+    <div class="item-name">${esc(x.analysis)} <span class="badge ${STATUSES[x.status] || 'badge-gray'}">${esc(x.status)}</span></div>
+    <div class="item-sub">${esc(x.sample)} · ${esc(x.count)} sampel</div>
+    <div class="item-sub mono">${esc(x.date)} ${esc(x.start)}–${esc(x.end)} · ${esc(x.instruments.join(', ') || 'tanpa alat')}</div>
+    <div class="item-sub">Analis ${esc(x.analyst)} · PIC ${esc(x.pic)}</div></div>`).join('')
+    : '<div class="empty" style="padding:1.5rem 0"><p>Belum ada jadwal.</p></div>';
+}
+
+// ═══ PEMAKAIAN ALAT ═══
+function shiftWeek(d) { weekOffset = d === 0 ? 0 : weekOffset + d; renderAlat(); }
+function renderAlat() {
+  const mon = weekStart(weekOffset), days = [...Array(7)].map((_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return d; });
+  const today = isoDate(new Date());
+  $('week-label').textContent = `${days[0].toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} – ${days[6].toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+  const head = days.map(d => `<th class="${isoDate(d) === today ? 'today-col' : ''}">${d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' })}</th>`).join('');
+  const active = items.filter(x => x.status !== 'Ditunda');
+  const rows = ALL_INST.map(inst => {
+    const cells = days.map(d => {
+      const day = isoDate(d);
+      const bk = active.filter(x => x.date === day && x.instruments.includes(inst)).sort((a, b) => a.start.localeCompare(b.start));
+      return `<td class="${day === today ? 'today-col' : ''}" style="vertical-align:top;min-width:120px">${bk.map(x => {
+        const clash = bk.some(y => y !== x && overlap(x, y));
+        return `<div class="cell-book ${clash ? 'conflict' : ''}" title="PIC ${esc(x.pic)} · Analis ${esc(x.analyst)}"><span class="mono">${esc(x.start)}–${esc(x.end)}</span><br>${esc(x.analysis)}</div>`;
+      }).join('') || '<span class="dim">—</span>'}</td>`;
+    }).join('');
+    return `<tr><td class="item-name" style="white-space:nowrap">${esc(inst)}</td>${cells}</tr>`;
+  }).join('');
+  $('alat-table').innerHTML = `<div class="table-wrap"><table><thead><tr><th>Alat</th>${head}</tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="hint" style="margin-top:8px">Kotak merah = jadwal bentrok pada alat yang sama. Arahkan kursor ke kotak untuk melihat PIC dan analis.</div>`;
+}
+
+// ═══ EKSPOR ═══
+function exportCSV() {
+  const rows = [['Tanggal', 'Mulai', 'Selesai', 'Bagian', 'Analisa', 'Sampel', 'Jumlah Sampel', 'Alat', 'Analis', 'PIC', 'Status', 'Catatan']]
+    .concat([...items].sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start))
+      .map(x => [x.date, x.start, x.end, x.lab, x.analysis, x.sample, x.count, x.instruments.join('; '), x.analyst, x.pic, x.status, x.notes]));
+  downloadCSV(`jadwal-analisa-${isoDate(new Date())}.csv`, rows);
+}
+
+buildForm();
+goPage((location.hash || '#jadwal').slice(1));
+</script>
+</body>
+</html>
